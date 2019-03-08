@@ -102,12 +102,10 @@ var config = {
             type: parseInt(_Type)
         }, function(res) {
             layer.close(index);
-            if (_Type == 1) {
-                if (res.data.content) {
-                    $.each(res.data.keyword, function (i, e) {
-                        $('#' + e).val(eval('res.data.content.'+ e));
-                    })
-                }
+            if (res.data.content) {
+                $.each(res.data.keys, function (i, e) {
+                    $('#' + e).val(eval('res.data.content.'+ e));
+                })
             }
             $('#form_' + _Type).show();
         }, 'json');
