@@ -1,0 +1,115 @@
+{{ template "header.html"}}
+<article class="page-container">
+    <form class="form form-horizontal" id="sysmenu_form">
+        <input type="hidden" name="menu_id" id="menu_id" value="{{.info.Id}}"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">所属等级:</label>
+            <div class="formControls col-xs-8 col-sm-4"> <span class="select-box">
+				<select class="select" size="1" name="parent_id" id="parent_id">
+					<option value="0" selected>顶级菜单</option>
+                    {{range $k, $v := .menuTree}}
+                        <option value="{{$v.Id}}" level="{{$v.Level}}" {{if eq $v.Id $.info.ParentId}}selected{{end}}>{{$v.Title}}</option>
+                        {{range $_k, $_v := $v.Children}}
+                            <option value="{{$_v.Id}}" level="{{$_v.Level}}" {{if eq $_v.Id $.info.ParentId}}selected{{end}}>&nbsp;&nbsp;&nbsp;&nbsp;{{$_v.Title}}</option>
+                        {{end}}
+                    {{end}}
+				</select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>名称:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="菜单名称" id="title" name="title" value="{{.info.Title}}">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">图标:</label>
+            <div class="formControls col-xs-8 col-sm-2">
+                <input type="text" class="input-text" placeholder="一级菜单图标" id="icon" name="icon" value="{{.info.Icon}}">&nbsp;默认图标 <i class="Hui-iconfont">&#xe63c</i>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">Control:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="控制器名称, 2/3级必填" id="control" name="control" value="{{.info.Control}}">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">Action:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="Action名称, 2/3级必填" name="action" id="action" value="{{.info.Action}}">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">排序:</label>
+            <div class="formControls col-xs-8 col-sm-2">
+                <input type="text" class="input-text" placeholder="升序, 默认999" name="sort" id="sort" value="{{.info.Sort}}">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+{{ template "footer.html" }}
+<script type="text/javascript">
+$(function(){
+    //菜单等级
+    $('#parent_id').change(function(){
+        var id = $('#id').val();
+        var parent_id = $(this).val();
+        if(parent_id == id){
+            layer.msg('不能选择自己作为父级菜单');
+            $(this).val(0);
+        }
+    });
+    $('.skin-minimal input').iCheck({
+        checkboxClass: 'icheckbox-blue',
+        radioClass: 'iradio-blue',
+        increaseArea: '20%'
+    });
+    $("#sysmenu_form").validate({
+        rules:{
+            title: "required",
+            sort: {
+                range: [ 1, 999]
+            }
+        },
+        messages: {
+            title: "请输入名称",
+            sort: "请输入1～999之间的数字",
+        },
+        submitHandler: function(form) {
+            var control = $('#control').val();
+            var action = $('#action').val();
+            var level = $('#parent_id').find("option:selected").attr('level');
+            if (level != undefined && !control) {
+                layer.msg('Control不能为空');
+                return;
+            }
+            if (level != undefined && !action) {
+                layer.msg('Action不能为空');
+                return;
+            }
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            var loading = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+            $.post('/sysmenu-modify.html', $(form).serialize(), function (msg) {
+                layer.close(loading);
+                parent.layer.msg(msg.message);
+                if (msg.code == 0) {
+                    parent.location.reload();
+                    parent.layer.close(index);//关闭弹出的子页面窗口
+                }
+            }, 'json');
+            return;
+        }
+    });
+});
+</script>
+</body>
+</html>

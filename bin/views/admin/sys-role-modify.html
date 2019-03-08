@@ -1,0 +1,85 @@
+{{ template "header.html"}}
+<article class="page-container">
+    <form class="form form-horizontal" id="sysrole_form">
+        <input type="hidden" id="role_id" name="role_id" value="{{.info.Id}}"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>角色名称:</label>
+            <div class="formControls col-xs-8 col-sm-5">
+                <input type="text" class="input-text" placeholder="角色名称" id="title" name="title" value="{{.info.Title}}"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">备注:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <textarea name="remark" class="textarea"  placeholder="说点什么...最少输入10个字符">{{.info.Remark}}</textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">菜单:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                {{range $k, $v := .menuTree}}
+                    <dl class="permission-list">
+                        <dt><label><input type="checkbox" value="{{$v.Id}}" name="menu_arr" {{range $mk, $mv := $.menuRoleList}}{{if eq $v.Id $mv}}checked{{end}}{{end}}/> {{$v.Title}}</label></dt>
+                        <dd>
+                            {{range $_k, $_v := $v.Children}}
+                                <dl class="cl permission-list2">
+                                    <dt><label><input type="checkbox" value="{{$_v.Id}}" name="menu_arr" {{range $mk, $mv := $.menuRoleList}}{{if eq $_v.Id $mv}}checked{{end}}{{end}}/> {{$_v.Title}}</label></dt>
+                                     {{range $__k, $__v := $_v.Children}}
+                                         <dd><label><input type="checkbox" value="{{$__v.Id}}" name="menu_arr" {{range $mk, $mv := $.menuRoleList}}{{if eq $__v.Id $mv}}checked{{end}}{{end}}/> {{$__v.Title}}</label></dd>
+                                     {{end}}
+                                </dl>
+                            {{end}}
+                        </dd>
+                    </dl>
+               {{end}}
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <button type="submit" class="btn btn-success radius"><i class="icon-ok"></i> 确定</button>
+            </div>
+        </div>
+    </form>
+</article>
+{{ template "footer.html"}}
+<script type="text/javascript">
+$(function(){
+    //一级
+    $(".permission-list dt input:checkbox").click(function(){
+        $(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+    });
+    //二级
+    $(".permission-list2 dt input:checkbox").click(function(){
+        $(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+    });
+    //三级
+    $(".permission-list2 dd input:checkbox").click(function(){
+        $(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+        $(this).parents(".permission-list2").find("dt").first().find("input:checkbox").prop('checked', true);
+    });
+    //保存
+    $("#sysrole_form").validate({
+        rules:{
+            name: "required",
+        },
+        messages: {
+            name: "请输入名称",
+        },
+        submitHandler:function(form){
+            var index = layer.load(0, {shade: false});
+            $.post('/sysrole-modify.html', $(form).serialize(), function (msg) {
+                layer.close(index)
+                layer.msg(msg.message);
+                if (msg.code == 0) {
+                    parent.location.reload();
+                }
+            }, 'json');
+            return;
+        }
+    });
+});
+</script>
+{{/*src="/static/admin/sysrole_modify.js"></script>*/}}
+</body>
+</html>

@@ -1,0 +1,5 @@
+#!/bin/bash
+set GOOS=linux
+set GOARCH=amd64
+set GOPATH=$(cd `dirname $0`; pwd)
+go build -o 0376.kim -ldflags "-X main.VERSION=1.0.4 -X 'main.BUILD_TIME=`date`' -s -w" -gcflags "-N -l" ../src/server.go
