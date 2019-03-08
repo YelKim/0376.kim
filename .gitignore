@@ -3,3 +3,4 @@ bin/logs/*
 bin/upload/*
 bin/upload/*
 bin/config.toml
+pkg/*
