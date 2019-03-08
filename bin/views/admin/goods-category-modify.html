@@ -31,7 +31,11 @@
             <div class="formControls col-xs-8 col-sm-7">
                 <span class="btn-upload form-group" style="width:100px;height:120px;">
                     <span class="upload_span"></span>
-                    <span><img style="margin: 0 auto;" width="120" src="{{.info.Imgurl}}"/></span>
+                    {{if .info.Imgurl}}
+                        <span style="display: none;"></span>
+                    {{else}}
+                        <span><img style="margin: 0 auto;" width="120" src="{{.info.Imgurl}}"/></span>
+                    {{end}}
                     <input type="hidden" name="imgurl" id="imgurl" value="{{.info.Imgurl}}"/>
                 </span>
             </div>

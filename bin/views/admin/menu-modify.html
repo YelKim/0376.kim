@@ -8,7 +8,7 @@
 				<select class="select" size="1" name="parent_id" id="parent_id">
 					<option value="0" selected>顶级栏目</option>
                         {{range $k, $v := .menuTree}}
-                            <option value="{{$v.Id}}" level="{{$v.Level}}">{{$v.Name}}</option>
+                            <option value="{{$v.Id}}" level="{{$v.Level}}" {{if eq $v.Id $.info.ParentId}}selected{{end}}>{{$v.Name}}</option>
                         {{end}}
 				</select>
 				</span>

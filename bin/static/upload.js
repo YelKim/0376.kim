@@ -14,7 +14,7 @@ var uploader = WebUploader.create({
         compressSize: 1024 * 1024
     },
     auto: true,
-    server: '/admin/simple/upload.html',
+    server: '/upload.html',
     compress: {
         // 图片质量，只有type为`image/jpeg`的时候才有效。
         quality: 90,
