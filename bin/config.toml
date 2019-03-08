@@ -1,4 +1,4 @@
-Mysql = "root:0376.kim@tcp(103.100.158.174:3306)/807flute.com"
+Mysql = "0376.kim:0376.kim@tcp(103.100.158.174:3306)/807flute.com"
 StaticDir = "./upload" #上传目录
 FileSize = 8 #单位M
 AdminPort = "8000"

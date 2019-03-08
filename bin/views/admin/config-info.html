@@ -1,0 +1,145 @@
+{{ template "header.html"}}
+<style type="text/css">
+    .tabPanel{
+        width: 100%;
+        height: 35px;
+        border-bottom: 2px solid #5a98de;
+        margin-bottom: 15px;
+        line-height: 35px;
+    }
+    .tabPanel span{
+        display: inline-block;
+        padding: 0 30px;
+        height: 35px;
+        background-color: #eee;
+        cursor: pointer;
+    }
+    .tabPanel span.on{
+        background-color: #5a98de;
+        color: #fff;
+    }
+</style>
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i> 首页
+    <span class="c-gray en">&gt;</span> 网站设置
+    <span class="c-gray en">&gt;</span> 信息配置
+    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
+        <i class="Hui-iconfont">&#xe68f;</i>
+    </a>
+</nav>
+<article class="page-container">
+    <div class="page-container">
+        <div class="tabPanel">
+            <span class="on" data-type="1">基础配置</span>
+            <span data-type="2">SEO配置</span>
+        </div>
+    </div>
+    <form class="form form-horizontal" id="form_1">
+        <input type="hidden" name="type" value="1"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>平台名称:</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" placeholder="平台名称" id="platform" name="platform">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>备案号:</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" placeholder="备案号" id="record_no" name="record_no">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>公众号:</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" placeholder="公众号" id="wx" name="wx">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>电话:</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" placeholder="电话" id="tel" name="tel">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>联系地址:</label>
+            <div class="formControls col-xs-8 col-sm-4">
+                <input type="text" class="input-text" placeholder="联系地址" id="address" name="address">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-7 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+    <form class="form form-horizontal" id="form_2" style="display: none;">
+        <input type="hidden" name="type" value="2"/>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>Keyword:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="关键字, 多个以','隔开" id="keyword" name="keyword">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>Description:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="描述" id="description" name="description">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-7 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+{{ template "footer.html"}}
+<script type="text/javascript">
+var config = {
+    show: function (_Type) {
+        var index = layer.load(0, {shade: false});
+        $.post('/config-info.html', {
+            type: parseInt(_Type)
+        }, function(res) {
+            layer.close(index);
+            if (_Type == 1) {
+                if (res.data.content) {
+                    $.each(res.data.keyword, function (i, e) {
+                        $('#' + e).val(eval('res.data.content.'+ e));
+                    })
+                }
+            }
+            $('#form_' + _Type).show();
+        }, 'json');
+    }
+}
+
+$(function(){
+    config.show(1);
+    // 提交保存
+    $(document).on('click', 'input[type="button"]', function () {
+        var from = $(this).parent().parent().parent();
+        var _Type = parseInt($(from).children('input[name="type"]').val());
+        var index = layer.load(0, {shade: false});
+        $.post('/admin/config-modify.html', $(from).serialize(), function(res) {
+            layer.close(index)
+            layer.msg(res.message);
+            if(res.code == 0) {
+                config.show(_Type);
+            }
+        }, 'json');
+        return;
+    });
+    //table 切换
+    $(document).on('click','.tabPanel span',function () {
+        $('#form_1, #form_2').hide();
+        $('.tabPanel span').removeClass('on');
+        $(this).addClass('on');
+        var _Type = $(this).attr('data-type');
+        config.show(_Type);
+        return;
+    });
+});
+</script>
+</body>
+</html>

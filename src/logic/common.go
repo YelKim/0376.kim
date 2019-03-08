@@ -37,4 +37,13 @@ func GetSysUser() *SysUser {
 	return sysUser
 }
 
+// 基础配置
+var config *Config
+func GetConfig() *Config {
+	once.Do(func() {
+		config = &Config{}
+	})
+	return config
+}
+
 
