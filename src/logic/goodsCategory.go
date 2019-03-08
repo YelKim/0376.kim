@@ -2,17 +2,18 @@ package logic
 
 import (
 	"encoding/json"
-	"fmt"
+	"os"
 	"sort"
+	"strconv"
 )
 
 type GoodsCategoryInfo struct {
-	Id          int32  `json:"id" bson:"id"`
-	Title       string `json:"title" bson:"title"`             // 分类名称
-	Imgurl     string `json:"imgurl" bson:"imgurl"`         // 图标
-	Sort        int32  `json:"sort" bson:"sort"`               //排序
-	ParentId    int32  `json:"parent_id" bson:"parent_id"`     //无限分类 父类ID
-	Level       int8   `json:"level" bson:"level"`             //层级
+	Id       int32  `json:"id" bson:"id"`
+	Title    string `json:"title" bson:"title"`         // 分类名称
+	Imgurl   string `json:"imgurl" bson:"imgurl"`       // 图标
+	Sort     int32  `json:"sort" bson:"sort"`           //排序
+	ParentId int32  `json:"parent_id" bson:"parent_id"` //无限分类 父类ID
+	Level    int8   `json:"level" bson:"level"`         //层级
 }
 
 type GoodsCategory struct {
@@ -23,11 +24,11 @@ type GoodsCategory struct {
 
 type goodsCategoryList struct {
 	List  []*GoodsCategory `json:"list" bson:"list"`
-	Total int64   `json:"total" bson:"total"`
+	Total int64            `json:"total" bson:"total"`
 }
 
 // 分页获取栏目列表
-func (this *GoodsCategory) GetGoodsCategoryListByPage (page int32, keyword  string) interface{} {
+func (this *GoodsCategory) GetGoodsCategoryListByPage(page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_pagination_v1.0", page, pageSize, keyword)
 	info := &goodsCategoryList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -39,7 +40,7 @@ func (this *GoodsCategory) GetGoodsCategoryListByPage (page int32, keyword  stri
 }
 
 // 分页获取子栏目列表
-func (this *GoodsCategory) GetGoodsCategoryChildListByParentId (parentId int64) interface{} {
+func (this *GoodsCategory) GetGoodsCategoryChildListByParentId(parentId int64) interface{} {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_child_v1.0", parentId)
 	info := []*GoodsCategory{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -47,16 +48,22 @@ func (this *GoodsCategory) GetGoodsCategoryChildListByParentId (parentId int64) 
 }
 
 // 删除栏目
-func (this *GoodsCategory) DelGoodsCategoryById (categotyId int64) int {
+func (this *GoodsCategory) DelGoodsCategoryById(categotyId int64) int {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_delById_v1.0", categotyId)
-	info := []map[string]int{}
+	info := []map[string]string{}
 	json.Unmarshal([]byte(jsonStr), &info)
-	fmt.Println(info)
-	return info[0]["type"]
+	_type, _ := strconv.Atoi(info[0]["type"])
+	if _type == 0 {
+		// 判断文件是否存在
+		if _, err := os.Stat("." + info[0]["imgurl"]); os.IsNotExist(err) == false {
+			os.Remove("." + info[0]["imgurl"])
+		}
+	}
+	return _type
 }
 
 // 根据ID查询后台菜单详情
-func (this *GoodsCategory) GetGoodsCategoryInfoById (categoryId int64) *GoodsCategory {
+func (this *GoodsCategory) GetGoodsCategoryInfoById(categoryId int64) *GoodsCategory {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_infoById_v1.0", categoryId)
 	info := []*GoodsCategory{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -64,7 +71,7 @@ func (this *GoodsCategory) GetGoodsCategoryInfoById (categoryId int64) *GoodsCat
 }
 
 // 添加、编辑后台菜单
-func (this *GoodsCategory) ModifyGoodsCategory ( title, imgurl string, parentId, sort, categoryId int64) int {
+func (this *GoodsCategory) ModifyGoodsCategory(title, imgurl string, parentId, sort, categoryId int64) int {
 	// 判断是否有图标上传
 	_imgurl := ""
 	if len(imgurl) > 0 {
@@ -111,7 +118,7 @@ func (this *GoodsCategory) GetGoodsCategoryListByLevel(level int) []*goodsCatego
 			}
 			tmp[v.Sort] = v
 			keys = append(keys, int(v.Sort))
-			i++;
+			i++
 		}
 		// 排序
 		sort.Ints(keys)

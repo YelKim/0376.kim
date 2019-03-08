@@ -2,7 +2,6 @@ package logic
 
 import (
 	"encoding/json"
-	"fmt"
 	"sort"
 )
 
@@ -30,7 +29,7 @@ type menuList struct {
 }
 
 // 分页获取栏目列表
-func (this *Menu) GetMenuListByPage (page int32, keyword  string) interface{} {
+func (this *Menu) GetMenuListByPage(page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_Menu_pagination_v1.0", page, pageSize, keyword)
 	info := &menuList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -42,7 +41,7 @@ func (this *Menu) GetMenuListByPage (page int32, keyword  string) interface{} {
 }
 
 // 分页获取子栏目列表
-func (this *Menu) GetMenuChildListByParentId (parentId int64) interface{} {
+func (this *Menu) GetMenuChildListByParentId(parentId int64) interface{} {
 	jsonStr, _ := db.Call("Proc_Menu_child_v1.0", parentId)
 	info := []*Menu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -50,16 +49,15 @@ func (this *Menu) GetMenuChildListByParentId (parentId int64) interface{} {
 }
 
 // 删除栏目
-func (this *Menu) DelMenuById (menuId int64) int {
+func (this *Menu) DelMenuById(menuId int64) int {
 	jsonStr, _ := db.Call("Proc_Menu_delById_v1.0", menuId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
-	fmt.Println(info)
 	return info[0]["type"]
 }
 
 // 根据ID查询栏目详情
-func (this *Menu) GetMenuInfoById (menuId int64) *Menu {
+func (this *Menu) GetMenuInfoById(menuId int64) *Menu {
 	jsonStr, _ := db.Call("Proc_Menu_infoById_v1.0", menuId)
 	info := []*Menu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -67,7 +65,7 @@ func (this *Menu) GetMenuInfoById (menuId int64) *Menu {
 }
 
 // 添加、编辑栏目
-func (this *Menu) ModifyMenu (name, title, keyword, description, url string, parentId, sort, menuId int64) int {
+func (this *Menu) ModifyMenu(name, title, keyword, description, url string, parentId, sort, menuId int64) int {
 	jsonStr, _ := db.Call("Proc_Menu_modify_v1.0", name, title, keyword, description, url, parentId, sort, menuId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -104,12 +102,12 @@ func (this *Menu) GetMenuListByLevel(level int) []*menuTree {
 				v.Children = makeTreeCore(k, tree)
 			}
 			// 相同位置 自动+1
-			if _, ok := tmp[v.Sort]; ok  {
+			if _, ok := tmp[v.Sort]; ok {
 				v.Sort = v.Sort + int32(i)
 			}
 			tmp[v.Sort] = v
 			keys = append(keys, int(v.Sort))
-			i++;
+			i++
 		}
 		// 排序
 		sort.Ints(keys)
