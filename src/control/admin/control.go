@@ -94,6 +94,6 @@ func (this *AdminControl) Upload(c *gin.Context) {
 	}
 	defer out.Close()
 	io.Copy(out, file)
-	returnJson(c, 0, gin.H{"path": fileName})
+	returnJson(c, 0, gin.H{"path": strings.Trim(fileName, ".")})
 	return
 }

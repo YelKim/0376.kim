@@ -1,5 +1,4 @@
 .idea/*
 bin/logs/*
 bin/upload/*
-bin/upload/*
 pkg/*
