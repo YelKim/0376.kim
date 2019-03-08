@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"control"
 	"github.com/gin-gonic/gin"
 	"logic"
 	"strconv"
@@ -14,11 +13,11 @@ func (this *AdminControl) SysMenuList(c *gin.Context) {
 		keyword := c.DefaultPostForm("keyword", "")
 		page, _ := strconv.Atoi(c.DefaultPostForm("page", "1"))
 		iRelust := logic.GetSysMenu().GetSysMenuListByPage(int32(page), keyword)
-		control.ReturnJson(c, 0, iRelust)
+		returnJson(c, 0, iRelust)
 		return
 	}
 	keyword := c.DefaultQuery("keyword", "")
-	control.ReturnHtml(c, "sys-menu.html", gin.H{
+	returnHtml(c, "sys-menu.html", gin.H{
 		"keyword": keyword,
 	})
 	return
@@ -29,14 +28,14 @@ func (this *AdminControl) SysMenuChildList(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		parentId, _ := strconv.Atoi(c.DefaultPostForm("parent_id", "0"))
 		if parentId == 0 {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 			return
 		}
 		iRelust := logic.GetSysMenu().GetSysMenuChildListByParentId(int64(parentId))
-		control.ReturnJson(c, 0, iRelust)
+		returnJson(c, 0, iRelust)
 		return
 	}
-	control.ReturnJson(c, 1000, nil)
+	returnJson(c, 1000, nil)
 	return
 }
 
@@ -45,14 +44,14 @@ func (this *AdminControl) SysMenuDel(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		menuId, _ := strconv.Atoi(c.DefaultPostForm("menu_id", "0"))
 		if menuId == 0 {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 			return
 		}
 		iRelust := logic.GetSysMenu().DelSysMenuById(int64(menuId))
-		control.ReturnJson(c, iRelust, nil)
+		returnJson(c, iRelust, nil)
 		return
 	}
-	control.ReturnJson(c, 1000, nil)
+	returnJson(c, 1000, nil)
 	return
 }
 
@@ -68,10 +67,10 @@ func (this *AdminControl) SysMenuModify(c *gin.Context) {
 		action := c.DefaultPostForm("action", "")
 		// 2、3级菜单 control action 不能为空
 		if parentId > 0 && (len(_control) == 0 || len(action) == 0) {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 		}
 		iResult := logic.GetSysMenu().ModifySysMenu(int64(menuId), int64(parentId), int64(sort), title, icon, _control, action)
-		control.ReturnJson(c, iResult, nil)
+		returnJson(c, iResult, nil)
 		return
 	}
 	// 获取后台菜单详情
@@ -82,7 +81,7 @@ func (this *AdminControl) SysMenuModify(c *gin.Context) {
 		info = logic.GetSysMenu().GetSysMenuInfoById(int64(menuId))
 	}
 	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(2)
-	control.ReturnHtml(c, "sys-menu-modify.html", gin.H{
+	returnHtml(c, "sys-menu-modify.html", gin.H{
 		"info":     info,
 		"menuTree": menuTree,
 	})
@@ -95,11 +94,11 @@ func (this *AdminControl) SysRoleList(c *gin.Context) {
 		keyword := c.DefaultPostForm("keyword", "")
 		page, _ := strconv.Atoi(c.DefaultPostForm("page", "1"))
 		iRelust := logic.GetSysRole().GetRoleListByPage(int32(page), keyword)
-		control.ReturnJson(c, 0, iRelust)
+		returnJson(c, 0, iRelust)
 		return
 	}
 	keyword := c.DefaultQuery("keyword", "")
-	control.ReturnHtml(c, "sys-role.html", gin.H{
+	returnHtml(c, "sys-role.html", gin.H{
 		"keyword": keyword,
 	})
 	return
@@ -114,10 +113,10 @@ func (this *AdminControl) SysRoleModify(c *gin.Context) {
 		remark := c.DefaultPostForm("remark", "")
 		menuArr, _ := c.GetPostFormArray("menu_arr")
 		if len(menuArr) == 0 || len(title) == 0 {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 		}
 		iResult := logic.GetSysRole().ModifySysRole(int64(roleId), title, remark, strings.Join(menuArr, ","))
-		control.ReturnJson(c, iResult, nil)
+		returnJson(c, iResult, nil)
 		return
 	}
 	// 获取管理员角色详情
@@ -131,7 +130,7 @@ func (this *AdminControl) SysRoleModify(c *gin.Context) {
 	}
 	// 获取菜单分类列表
 	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(3)
-	control.ReturnHtml(c, "sys-role-modify.html", gin.H{
+	returnHtml(c, "sys-role-modify.html", gin.H{
 		"info":         info,
 		"menuTree":     menuTree,
 		"menuRoleList": menuRoleList,
@@ -145,11 +144,11 @@ func (this *AdminControl) SysUserList(c *gin.Context) {
 		keyword := c.DefaultPostForm("keyword", "")
 		page, _ := strconv.Atoi(c.DefaultPostForm("page", "1"))
 		iRelust := logic.GetSysUser().GetUserListByPage(int32(page), keyword)
-		control.ReturnJson(c, 0, iRelust)
+		returnJson(c, 0, iRelust)
 		return
 	}
 	keyword := c.DefaultQuery("keyword", "")
-	control.ReturnHtml(c, "sys-user.html", gin.H{
+	returnHtml(c, "sys-user.html", gin.H{
 		"keyword": keyword,
 	})
 	return
@@ -160,14 +159,14 @@ func (this *AdminControl) SysUserDel(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		adminId, _ := strconv.Atoi(c.DefaultPostForm("admin_id", "0"))
 		if adminId == 0 {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 			return
 		}
 		iRelust := logic.GetSysUser().DelSysUserById(int64(adminId))
-		control.ReturnJson(c, iRelust, nil)
+		returnJson(c, iRelust, nil)
 		return
 	}
-	control.ReturnJson(c, 1000, nil)
+	returnJson(c, 1000, nil)
 	return
 }
 
@@ -182,11 +181,11 @@ func (this *AdminControl) SysUserModify(c *gin.Context) {
 		sex, _ := strconv.Atoi(c.DefaultPostForm("sex", "0"))
 		roleId, _ := strconv.Atoi(c.DefaultPostForm("role_id", "0"))
 		if roleId == 0 || len(phone) == 0 || len(nickname) == 0 || (adminId == 0 && len(password) == 0) {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 			return
 		}
 		iRelust := logic.GetSysUser().ModifySysUser(nickname, phone, password, remark, int64(roleId), int64(sex), int64(adminId))
-		control.ReturnJson(c, iRelust, nil)
+		returnJson(c, iRelust, nil)
 		return
 	}
 	// 获取管理员详情
@@ -197,7 +196,7 @@ func (this *AdminControl) SysUserModify(c *gin.Context) {
 	}
 	// 获取角色列表
 	roleList := logic.GetSysRole().GetSysRoleList()
-	control.ReturnHtml(c, "sys-user-modify.html", gin.H{
+	returnHtml(c, "sys-user-modify.html", gin.H{
 		"info":     info,
 		"roleList": roleList,
 	})

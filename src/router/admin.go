@@ -33,14 +33,14 @@ func GetAdminRouter() *gin.Engine {
 	r.Static("/lib", "./lib")       //静态文件
 
 	// 基本路由
-	r.GET("/index.html", c.Index)          //首页
-	r.GET("/", c.Index)                    //首页
-	r.GET("/index", c.Index)               //首页
-	r.GET("/welcome.html", c.Welcome)      //欢迎页
-	r.GET("/login.html", c.Login)          // 登录页
-	r.POST("/login.html", c.Login)         // ajax登录
-	r.GET("/captcha.html", c.Captcha)      //验证码
-	r.POST("/upload.html", control.Upload) // 图片上传
+	r.GET("/index.html", c.Index)     //首页
+	r.GET("/", c.Index)               //首页
+	r.GET("/index", c.Index)          //首页
+	r.GET("/welcome.html", c.Welcome) //欢迎页
+	r.GET("/login.html", c.Login)     // 登录页
+	r.POST("/login.html", c.Login)    // ajax登录
+	r.GET("/captcha.html", c.Captcha) //验证码
+	r.POST("/upload.html", c.Upload)  // 图片上传
 
 	// 后台菜单
 	r.GET("/sysmenu-list.html", c.SysMenuList)        //后台菜单列表

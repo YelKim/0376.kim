@@ -2,7 +2,6 @@ package admin
 
 import (
 	"conf"
-	"control"
 	"github.com/dchest/captcha"
 	"github.com/gin-gonic/gin"
 	"logic"
@@ -15,7 +14,7 @@ import (
 func (this *AdminControl) Index(c *gin.Context) {
 	// 获取后台左侧菜单
 	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(2)
-	control.ReturnHtml(c, "index.html", gin.H{"menuTree": menuTree})
+	returnHtml(c, "index.html", gin.H{"menuTree": menuTree})
 	return
 }
 
@@ -24,7 +23,7 @@ func (this *AdminControl) Welcome(c *gin.Context) {
 	//服务器名称
 	host, _ := os.Hostname()
 	path, _ := os.Getwd()
-	control.ReturnHtml(c, "welcome.html", gin.H{
+	returnHtml(c, "welcome.html", gin.H{
 		"host":    host,
 		"path":    path,
 		"os":      runtime.GOOS,
@@ -41,7 +40,7 @@ func (this *AdminControl) Login(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		return
 	}
-	control.ReturnHtml(c, "login.html", nil)
+	returnHtml(c, "login.html", nil)
 	return
 }
 

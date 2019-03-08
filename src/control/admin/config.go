@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"control"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gin-gonic/gin.v1/json"
 	"logic"
@@ -14,13 +13,13 @@ func (this *AdminControl) ConfigInfo(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		_type, _ := strconv.Atoi(c.DefaultPostForm("type", "1"))
 		info := logic.GetConfig().GetConfigInfoByType(_type)
-		control.ReturnJson(c, 0, gin.H{
+		returnJson(c, 0, gin.H{
 			"content": info["content"],
 			"keys":    info["keys"],
 		})
 		return
 	}
-	control.ReturnHtml(c, "config-info.html", nil)
+	returnHtml(c, "config-info.html", nil)
 	return
 }
 
@@ -45,13 +44,13 @@ func (this *AdminControl) ConfigModify(c *gin.Context) {
 				Address:  c.DefaultPostForm("address", ""),
 			}
 		} else {
-			control.ReturnJson(c, 1001, nil)
+			returnJson(c, 1001, nil)
 		}
 		jsonStr, _ := json.Marshal(content)
 		iRelust := logic.GetConfig().ModifyConfig(_type, string(jsonStr))
-		control.ReturnJson(c, iRelust, nil)
+		returnJson(c, iRelust, nil)
 		return
 	}
-	control.ReturnHtml(c, "config-info.html", nil)
+	returnHtml(c, "config-info.html", nil)
 	return
 }
