@@ -77,6 +77,7 @@ func (this *AdminControl) MenuModify(c *gin.Context) {
 	// 获取栏目详情
 	menuId, _ := strconv.Atoi(c.DefaultQuery("menu_id", "0"))
 	info := &logic.Menu{}
+	info.Sort = 999
 	// 获取栏目分类列表
 	if menuId > 0 {
 		info = logic.GetMenu().GetMenuInfoById(int64(menuId))

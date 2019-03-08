@@ -70,6 +70,7 @@ func (this *AdminControl) GoodsCategoryModify(c *gin.Context) {
 	// 获取商品分类详情
 	categoryId, _ := strconv.Atoi(c.DefaultQuery("category_id", "0"))
 	info := &logic.GoodsCategory{}
+	info.Sort = 999
 	// 获取商品分类列表
 	if categoryId > 0 {
 		info = logic.GetGoodsCategory().GetGoodsCategoryInfoById(int64(categoryId))

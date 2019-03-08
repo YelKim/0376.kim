@@ -76,6 +76,7 @@ func (this *AdminControl) SysMenuModify(c *gin.Context) {
 	// 获取后台菜单详情
 	menuId, _ := strconv.Atoi(c.DefaultQuery("menu_id", "0"))
 	info := &logic.SysMenu{}
+	info.Sort = 999
 	// 获取菜单分类列表
 	if menuId > 0 {
 		info = logic.GetSysMenu().GetSysMenuInfoById(int64(menuId))
