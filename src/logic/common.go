@@ -46,4 +46,22 @@ func GetConfig() *Config {
 	return config
 }
 
+// 栏目管理
+var menu *Menu
+func GetMenu() *Menu {
+	once.Do(func() {
+		menu = &Menu{}
+	})
+	return menu
+}
+
+// 商品管理
+var goodsCategory *GoodsCategory
+func GetGoodsCategory() *GoodsCategory {
+	once.Do(func() {
+		goodsCategory = &GoodsCategory{}
+	})
+	return goodsCategory
+}
+
 

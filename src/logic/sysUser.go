@@ -39,9 +39,9 @@ func (this *SysUser) GetUserListByPage (page int32, keyword  string) interface{}
 // 冻结管理员
 func (this *SysUser) DelSysUserById (userId int64) int {
 	jsonStr, _ := db.Call("Proc_SysUser_delById_v1.0", userId)
-	info := map[string]int{}
+	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
-	return info["type"]
+	return info[0]["type"]
 }
 
 // 根据ID查询管理员详情

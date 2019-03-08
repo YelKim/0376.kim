@@ -13,7 +13,7 @@ import (
 //首页
 func (this *AdminControl) Index (c *gin.Context) {
 	// 获取后台左侧菜单
-	menuTree:= logic.GetSysMenu().GetMenuListByLevel(2)
+	menuTree:= logic.GetSysMenu().GetSysMenuListByLevel(2)
 	returnHtml(c,"index.html", gin.H{"menuTree": menuTree})
 	return
 }

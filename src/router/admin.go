@@ -43,11 +43,12 @@ func GetAdminRouter() *gin.Engine {
 
 	// 后台菜单
 	r.GET("/sysmenu-list.html", c.SysMenuList) //后台菜单列表
-	r.POST("/sysmenu-list.html", c.SysMenuList) //ajax获取后台菜单列表
-	r.POST("/sysmenu-child.html", c.SysMenuChildList) //ajax后台菜单列表
+	r.POST("/sysmenu-list.html", c.SysMenuList) //ajax获取后台菜单列表数据
+	r.POST("/sysmenu-child.html", c.SysMenuChildList) //ajax后台子菜单列表数据
 	r.POST("/sysmenu-del.html", c.SysMenuDel) //删除后台菜单
 	r.GET("/sysmenu-modify.html", c.SysMenuModify) //编辑后台菜单页
 	r.POST("/sysmenu-modify.html", c.SysMenuModify) //ajax提交
+
 	// 后台管理员角色
 	r.GET("/sysrole-list.html", c.SysRoleList) //管理员角色列表
 	r.POST("/sysrole-list.html", c.SysRoleList) //ajax获取管理员角色列表
@@ -65,6 +66,22 @@ func GetAdminRouter() *gin.Engine {
 	r.GET("/config-info.html", c.ConfigInfo) //基础配置页面
 	r.POST("/config-info.html", c.ConfigInfo) //ajax获取基础配置详情
 	r.POST("/config-modify.html", c.ConfigModify) //编辑配置
+
+	// 栏目管理
+	r.GET("/menu-list.html", c.MenuList) //栏目列表页
+	r.POST("/menu-list.html", c.MenuList) //ajax获取栏目列表数据
+	r.POST("/menu-child.html", c.MenuChildList) //ajax获取子栏目列表数据
+	r.POST("/menu-del.html", c.MenuDel) //删除栏目
+	r.GET("/menu-modify.html", c.MenuModify) //编辑栏目
+	r.POST("/menu-modify.html", c.MenuModify) //ajax提交
+
+	// 商品分类
+	r.GET("/goodscategory-list.html", c.GoodsCategoryList) //商品分类列表页
+	r.POST("/goodscategory-list.html", c.GoodsCategoryList) //ajax获取商品分类列表数据
+	r.POST("/goodscategory-child.html", c.GoodsCategoryChildList) //ajax商品分类子分类列表数据
+	r.POST("/goodscategory-del.html", c.GoodsCategoryDel) //删除商品分类
+	r.GET("/goodscategory-modify.html", c.GoodsCategoryModify) //编辑商品分类
+	r.POST("/goodscategory-modify.html", c.GoodsCategoryModify) //ajax提交
 
 	return r
 }

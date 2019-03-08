@@ -8102,5 +8102,5 @@
     ], function( preset ) {
         return preset;
     });
-    return require('bin/lib/webuploader/0.1.5/webuploader');
+    return require('webuploader');
 });

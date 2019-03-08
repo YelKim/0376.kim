@@ -29,7 +29,7 @@ type sysMenuList struct {
 }
 
 // 分页获取后台菜单列表
-func (this *SysMenu) GetMenuListByPage (page int32, keyword  string) interface{} {
+func (this *SysMenu) GetSysMenuListByPage (page int32, keyword  string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysMenu_pagination_v1.0", page, pageSize, keyword)
 	info := &sysMenuList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -40,8 +40,8 @@ func (this *SysMenu) GetMenuListByPage (page int32, keyword  string) interface{}
 	return iResult
 }
 
-// 分页获取后台子菜单菜单列表
-func (this *SysMenu) GetMenuChildListByParentId (parentId int64) interface{} {
+// 分页获取后台子菜单列表
+func (this *SysMenu) GetSysMenuChildListByParentId (parentId int64) interface{} {
 	jsonStr, _ := db.Call("Proc_SysMenu_child_v1.0", parentId)
 	info := []*SysMenu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -51,13 +51,13 @@ func (this *SysMenu) GetMenuChildListByParentId (parentId int64) interface{} {
 // 删除后台菜单
 func (this *SysMenu) DelSysMenuById (menuId int64) int {
 	jsonStr, _ := db.Call("Proc_SysMenu_delById_v1.0", menuId)
-	info := map[string]int{}
+	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
-	return info["type"]
+	return info[0]["type"]
 }
 
 // 根据ID查询后台菜单详情
-func (this *SysMenu) GetMenuInfoById (menuId int64) *SysMenu {
+func (this *SysMenu) GetSysMenuInfoById (menuId int64) *SysMenu {
 	jsonStr, _ := db.Call("Proc_SysMenu_infoById_v1.0", menuId)
 	info := []*SysMenu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -78,7 +78,7 @@ type sysMenuTree struct {
 }
 
 // 根据等级获取菜单列表
-func (this *SysMenu) GetMenuListByLevel(level int) []*sysMenuTree {
+func (this *SysMenu) GetSysMenuListByLevel(level int) []*sysMenuTree {
 	jsonStr, _ := db.Call("Proc_SysMenu_listBylevel_v1.0", level)
 	list := []*sysMenuTree{}
 	json.Unmarshal([]byte(jsonStr), &list)

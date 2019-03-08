@@ -1,0 +1,109 @@
+{{ template "header.html" }}
+<article class="page-container">
+    <form class="form form-horizontal" id="menu_form">
+        <input type="hidden" id="nenu_id" name="menu_id" value="{{.info.Id}}">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">所属栏目:</label>
+            <div class="formControls col-xs-8 col-sm-4"> <span class="select-box">
+				<select class="select" size="1" name="parent_id" id="parent_id">
+					<option value="0" selected>顶级栏目</option>
+                        {{range $k, $v := .menuTree}}
+                            <option value="{{$v.Id}}" level="{{$v.Level}}">{{$v.Name}}</option>
+                        {{end}}
+				</select>
+				</span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>名称:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="栏目名称" id="name" name="name" value="{{.info.Name}}"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>Url:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="栏目url地址" id="url" name="url" value="{{.info.Url}}"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">Title:</label>
+            <div class="formControls col-xs-8 col-sm-2">
+                <input type="text" class="input-text" placeholder="Html title" id="title" name="title" value="{{.info.Title}}"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">Keyword:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <input type="text" class="input-text" placeholder="Seo keyword" id="keyword" name="keyword" value="{{.info.Keyword}}"/>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">Description:</label>
+            <div class="formControls col-xs-8 col-sm-7">
+                <textarea name="description" id="description" class="textarea" placeholder="说点什么...100个字符以内">{{.info.Description}}</textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">排序:</label>
+            <div class="formControls col-xs-8 col-sm-2">
+                <input type="text" class="input-text" placeholder="升序, 默认999" name="sort" id="sort" value="{{.info.Sort}}"/>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+{{ template "footer.html" }}
+<script type="text/javascript">
+$(function(){
+    //菜单等级
+    $('#parent_id').change(function(){
+        var id = $('#id').val();
+        var parent_id = $(this).val();
+        if(parent_id == id){
+            layer.msg('不能选择自己作为父级菜单');
+            $(this).val(0);
+        }
+    });
+    $('.skin-minimal input').iCheck({
+        checkboxClass: 'icheckbox-blue',
+        radioClass: 'iradio-blue',
+        increaseArea: '20%'
+    });
+    $("#menu_form").validate({
+        rules:{
+            name: "required",
+            title: "required",
+            sort: {
+                range: [1, 999]
+            }
+        },
+        messages: {
+            name: "请输入名称",
+            title: "请输入Title",
+            sort: "请输入1～999之间的数字",
+        },
+        submitHandler: function(form) {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            var loading = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+            $.post('/menu-modify.html', $(form).serialize(), function (msg) {
+                layer.close(loading);
+                parent.layer.msg(msg.message);
+                if (msg.code == 0) {
+                    parent.location.reload();
+                    parent.layer.close(index);//关闭弹出的子页面窗口
+                }
+            }, 'json');
+            return;
+        }
+    });
+});
+</script>
+</body>
+</html>

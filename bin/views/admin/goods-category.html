@@ -1,20 +1,20 @@
-{{ template "header.html" }}
+{{ template "header.html"}}
 <nav class="breadcrumb">
     <i class="Hui-iconfont">&#xe67f;</i> 首页
-    <span class="c-gray en">&gt;</span> 网站设置
-    <span class="c-gray en">&gt;</span> 栏目管理
+    <span class="c-gray en">&gt;</span> 商品管理
+    <span class="c-gray en">&gt;</span> 商品分类
     <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
         <i class="Hui-iconfont">&#xe68f;</i>
     </a>
 </nav>
 <div class="page-container">
     <div class="text-l">
-        <input type="text" class="input-text" style="width:150px" placeholder="输入栏目名称" id="keyword" value="{{.keyword}}">
-        <button type="button" onclick="menu.search();" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i> 搜栏目</button>
+        <input type="text" class="input-text" style="width:150px" placeholder="输入分类名称" id="keyword" value="{{.keyword}}">
+        <button type="button" onclick="goodsCategory.search();" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i> 搜分类</button>
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
-            <a href="javascript:;" onclick="layer_show('添加栏目','/menu-modify.html', 800)" class="btn btn-primary radius">
+            <a href="javascript:;" onclick="layer_show('添加','/goodscategory-modify.html', 800)" class="btn btn-primary radius">
                 <i class="Hui-iconfont">&#xe600;</i> 添加
             </a>
         </span>
@@ -25,49 +25,44 @@
             <thead>
             <tr class="text-c">
                 <th>名称</th>
-                <th>url</th>
-                <th>title</th>
-                <th>关键字</th>
-                <th>描述</th>
+                <th>图标</th>
                 <th>排序</th>
                 <th>修改时间</th>
                 <th>操作</th>
             </tr>
             </thead>
-            <tbody id="menuTr"></tbody>
+            <tbody id="goodsCategoryTr"></tbody>
         </table>
         <div id="paginationDiv" class="mt-15" style="display: none;"></div>
     </div>
 </div>
-{{ template "footer.html" }}
+{{ template "footer.html"}}
 <script type="text/javascript">
-var menu = {
+var goodsCategory = {
     //绑定数据到 tr
     bindDataToTable: function (resault, type, _this) {
         var html = '';
         if (resault.data) {
             $.each(resault.data, function (i, e) {
                 var icon = e.child_count > 0 ? '&#xe600;' : '&#xe6a1;';
-                var ahtml = '<i class="Hui-iconfont">' + icon + '</i> ' + e.name;
+                var ahtml = '<i class="Hui-iconfont">' + icon + '</i> ' + e.title;
                 if (e.child_count) {
-                    ahtml = '<a href="javascript:;" onclick="menu.ajaxChildList(this, ' + e.id + ', ' + e.child_count + ');" title="点击展开">'+ ahtml +'</a>'
+                    ahtml = '<a href="javascript:;" onclick="goodsCategory.ajaxChildList(this, ' + e.id + ', ' + e.child_count + ');" title="点击展开">'+ ahtml +'</a>'
                 }
                 var tabStr = '';
                 for (var ii = 1; ii <= e.level; ii++) {
                     tabStr += '&nbsp;&nbsp;&nbsp;&nbsp;';
                 }
                 var openStr = type ? ' parent_id="'+ e.parent_id +'"' : '';
+                var img = e.imgurl ? '<img src="'+ e.imgurl +'" height="50px"/>' : '';
                 html += '<tr class="text-c" val="'+ e.id +'" id="tr_'+ e.id +'" '+ openStr +'>'
                     + '<td child="close" style="text-align: left;">'+ tabStr + ahtml +'</td>'
-                    + '<td style="text-align: left;"><a href="'+ e.url +'" target="_blank">'+ e.url +'</a></td>'
-                    + '<td style="text-align: left;">'+ e.title +'</td>'
-                    + '<td style="text-align: left;">'+ e.keyword +'</td>'
-                    + '<td style="text-align: left;">'+ e.description +'</td>'
+                    + '<td>'+ img +'</td>'
                     + '<td>'+ e.sort +'</td>'
                     + '<td>'+ moment(e.update_at * 1000).format("YYYY/MM/DD HH:MM") +'</td>'
                     + '<td class="f-14 td-manage">'
-                        + '<a style="text-decoration:none" class="ml-5" onClick="layer_show(\'编辑栏目\',\'/menu-modify.html?menu_id='+ e.id +'\', 800)" href="javascript:;" title="编辑">编辑</a>'
-                        + '<a style="text-decoration:none" class="ml-5" onClick="menu.del(this,'+ e.id +', '+ e.child_count +')" href="javascript:;" title="删除">删除</a>'
+                        + '<a style="text-decoration:none" class="ml-5" onClick="layer_show(\'编辑商品分类\',\'/goodscategory-modify.html?category_id='+ e.id +'\', 800)" href="javascript:;" title="编辑">编辑</a>'
+                        + '<a style="text-decoration:none" class="ml-5" onClick="goodsCategory.del(this,'+ e.id +', '+ e.child_count +')" href="javascript:;" title="删除">删除</a>'
                     + '</td></tr>';
             });
             if (!type) {
@@ -82,7 +77,7 @@ var menu = {
     //ajax 执行夹在分页数据
     ajaxPage: function (page) {
         var index = layer.load(0, {shade: false});
-        $.post('/menu-list.html', {
+        $.post('/goodscategory-list.html', {
             page: page,
             keyword: $.trim($('#keyword').val())
         }, function (res) {
@@ -98,15 +93,15 @@ var menu = {
                     jump: function (obj, first) {
                         if (first) {
                             $('#total').text(res.data.total);
-                            menu.bindDataToTable(res.data, 0, $('#menuTr'));
+                            goodsCategory.bindDataToTable(res.data, 0, $('#goodsCategoryTr'));
                         } else {
                             var index = layer.load(0, {shade: false});
-                            $.post('/menu-list.html', {
+                            $.post('/goodscategory-list.html', {
                                 page: obj.curr,
                                 keyword: $.trim($('#keyword').val())
                             }, function (res) {
                                 layer.close(index);
-                                menu.bindDataToTable(res.data, 0, $('#menuTr'));
+                                goodsCategory.bindDataToTable(res.data, 0, $('#goodsCategoryTr'));
                             }, 'json');
                         }
                     }
@@ -115,7 +110,7 @@ var menu = {
             } else {
                 $('#paginationDiv').hide();
                 $('#total').text(res.data.total);
-                menu.bindDataToTable(res.data, 0, $('#menuTr'));
+                goodsCategory.bindDataToTable(res.data, 0, $('#goodsCategoryTr'));
             }
         }, 'json');
         return;
@@ -127,24 +122,19 @@ var menu = {
             layer.msg('请输入关键字');
             return;
         }
-        window.location.href = '/menu-list.html?page=1&keyword=' + keyword;
+        window.location.href = '/goodscategory-list.html?page=1&keyword=' + keyword;
     },
     //删除
     del: function (_this, id) {
         layer.confirm('确定要删除？', function () {
             var index = layer.load(0, {shade: false});
-            $.post('/menu-del.html', {
-                menu_id: id
+            $.post('/goodscategory-del.html', {
+                category_id: id
             }, function (msg) {
                 layer.close(index);
                 layer.msg(msg.message);
                 if (msg.code == 0) {
-                    $('#tr_' + id).remove();
-                    if ($('#menuTr').children().length == 0) {
-                        window.location.reload();
-                    }
-                    var total = parseInt($('#total').val());
-                    $('#total').text((total - 1).toString());
+                    window.location.reload();
                 }
             }, 'json');
         });
@@ -173,11 +163,11 @@ var menu = {
                 return;
             }
             var index = layer.load(0, {shade: false});
-            $.post('/menu-child.html', {
+            $.post('/goodscategory-child.html', {
                 parent_id: parent_id,
             }, function (res) {
                 layer.close(index);
-                menu.bindDataToTable(res, 1, $(_this));
+                goodsCategory.bindDataToTable(res, 1, $(_this));
             }, 'json');
         }
         return;
@@ -185,7 +175,7 @@ var menu = {
 };
 $(function(){
     //ajax 加载
-    menu.ajaxPage(1);
+    goodsCategory.ajaxPage(1);
 });
 </script>
 </body>

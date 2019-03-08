@@ -6498,5 +6498,5 @@
     ], function( Base ) {
         return Base;
     });
-    return require('bin/lib/webuploader/0.1.5/webuploader');
+    return require('webuploader');
 });

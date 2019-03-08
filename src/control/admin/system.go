@@ -12,7 +12,7 @@ func (this *AdminControl) SysMenuList (c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		keyword := c.DefaultPostForm("keyword", "")
 		page, _ := strconv.Atoi(c.DefaultPostForm("page", "1"))
-		iRelust := logic.GetSysMenu().GetMenuListByPage(int32(page), keyword)
+		iRelust := logic.GetSysMenu().GetSysMenuListByPage(int32(page), keyword)
 		returnJson(c, 0, iRelust)
 		return
 	}
@@ -31,7 +31,7 @@ func (this *AdminControl) SysMenuChildList (c *gin.Context) {
 			returnJson(c,1001,nil)
 			return
 		}
-		iRelust := logic.GetSysMenu().GetMenuChildListByParentId(int64(parentId))
+		iRelust := logic.GetSysMenu().GetSysMenuChildListByParentId(int64(parentId))
 		returnJson(c,0, iRelust)
 		return
 	}
@@ -78,9 +78,9 @@ func (this *AdminControl) SysMenuModify (c *gin.Context) {
 	info := &logic.SysMenu{}
 	// 获取菜单分类列表
 	if menuId > 0 {
-		info = logic.GetSysMenu().GetMenuInfoById(int64(menuId))
+		info = logic.GetSysMenu().GetSysMenuInfoById(int64(menuId))
 	}
-	menuTree := logic.GetSysMenu().GetMenuListByLevel(2)
+	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(2)
 	returnHtml(c, "sys-menu-modify.html", gin.H{
 		"info": info,
 		"menuTree": menuTree,
@@ -129,7 +129,7 @@ func (this *AdminControl) SysRoleModify (c *gin.Context) {
 		menuRoleList = logic.GetSysRole().GetSysRoleMenuListByRoleId(int64(roleId))
 	}
 	// 获取菜单分类列表
-	menuTree := logic.GetSysMenu().GetMenuListByLevel(3)
+	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(3)
 	returnHtml(c, "sys-role-modify.html", gin.H{
 		"info": info,
 		"menuTree": menuTree,
