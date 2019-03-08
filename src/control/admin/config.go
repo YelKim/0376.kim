@@ -23,33 +23,32 @@ func (this *AdminControl) ConfigInfo (c *gin.Context) {
 	return
 }
 
-// 添加、编辑网站信息
+// 编辑网站配置信息
 func (this *AdminControl) ConfigModify (c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		_type, _ := strconv.Atoi(c.DefaultPostForm("type", "0"))
-		content := make(map[string]interface{})
-		if _type == 1 {
+		var content interface{}
+		if _type == 2 {
 			// 全局SEO 关键字、描述
-			content = gin.H{
-				"keyword":     c.DefaultPostForm("keyword", ""),
-				"description": c.DefaultPostForm("description", ""),
+			content = &logic.SeoConfig{
+				Keyword:     c.DefaultPostForm("keyword", ""),
+				Description: c.DefaultPostForm("description", ""),
 			}
-		} else if _type == 2 {
+		} else if _type == 1 {
 			// 网站配置
-			content = gin.H{
-				"platform":  c.DefaultPostForm("platform", ""),
-				"record_no": c.DefaultPostForm("record_no", ""),
-				"wx":        c.DefaultPostForm("wx", ""),
-				"tel":       c.DefaultPostForm("tel", ""),
-				"address":   c.DefaultPostForm("address", ""),
+			content = logic.InfoConfig{
+				Platform: c.DefaultPostForm("platform", ""),
+				RecordNo: c.DefaultPostForm("record_no", ""),
+				Wx:       c.DefaultPostForm("wx", ""),
+				Tel:      c.DefaultPostForm("tel", ""),
+				Address:  c.DefaultPostForm("address", ""),
 			}
-
 		} else {
 			returnJson(c,1001,nil)
 		}
 		jsonStr, _ := json.Marshal(content)
 		iRelust := logic.GetConfig().ModifyConfig(_type, string(jsonStr))
-		returnJson(c, 0, iRelust)
+		returnJson(c, iRelust, nil)
 		return
 	}
 	returnHtml(c, "config-info.html", nil)

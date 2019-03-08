@@ -22,7 +22,7 @@ type SeoConfig struct {
 // 全局SEO配置
 type InfoConfig struct {
 	Platform  string `json:"platform" bson:"platform"`   // 关键字
-	Record_no string `json:"record_no" bson:"record_no"` // 版权
+	RecordNo string `json:"record_no" bson:"record_no"` // 版权
 	Wx        string `json:"wx" bson:"wx"`               // 公众号
 	Tel       string `json:"tel" bson:"tel"`             // 电话
 	Address   string `json:"address" bson:"address"`     // 公司地址

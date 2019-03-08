@@ -34,7 +34,7 @@ func returnJson(c *gin.Context, code int, data interface{}) {
 	if data != nil {
 		iResult["data"] = data
 	}
-	if code > 0 {
+	if code >= 0 {
 		iResult["message"] = errMessage[strconv.Itoa(code)]
 	}
 	c.JSON(200, iResult)

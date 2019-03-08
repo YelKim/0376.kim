@@ -119,7 +119,7 @@ $(function(){
         var from = $(this).parent().parent().parent();
         var _Type = parseInt($(from).children('input[name="type"]').val());
         var index = layer.load(0, {shade: false});
-        $.post('/admin/config-modify.html', $(from).serialize(), function(res) {
+        $.post('/config-modify.html', $(from).serialize(), function(res) {
             layer.close(index)
             layer.msg(res.message);
             if(res.code == 0) {

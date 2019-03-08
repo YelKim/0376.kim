@@ -64,6 +64,7 @@ func GetAdminRouter() *gin.Engine {
 	// 基础配置
 	r.GET("/config-info.html", c.ConfigInfo) //基础配置页面
 	r.POST("/config-info.html", c.ConfigInfo) //ajax获取基础配置详情
+	r.POST("/config-modify.html", c.ConfigModify) //编辑配置
 
 	return r
 }
