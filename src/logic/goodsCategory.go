@@ -65,10 +65,12 @@ func (this *GoodsCategory) GetGoodsCategoryInfoById (categoryId int64) *GoodsCat
 
 // 添加、编辑后台菜单
 func (this *GoodsCategory) ModifyGoodsCategory ( title, imgurl string, parentId, sort, categoryId int64) int {
+	// 判断是否有图标上传
+	_imgurl := ""
 	if len(imgurl) > 0 {
-
+		_imgurl = moveUpfile(imgurl, "category")
 	}
-	jsonStr, _ := db.Call("Proc_GoodsCategory_modify_v1.0", title, parentId, imgurl, sort, categoryId)
+	jsonStr, _ := db.Call("Proc_GoodsCategory_modify_v1.0", title, parentId, _imgurl, sort, categoryId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
 	return info[0]["type"]
