@@ -1,9 +1,9 @@
-Mysql = "root:passwrod@tcp(127.0.0.1:3306)/databasename"
+Mysql = "root:0376.kim@tcp(103.100.158.174:3306)/807flute.com"
 StaticDir = "./upload" #上传目录
 FileSize = 8 #单位M
 AdminPort = "8000"
 PageSize = 10
 FileExt = ["jpg", "jpeg", "gif", "bmp", "png", "doc", "docx", "xls", "xlsx", "zip"]
 [Redis]
-    Conn = "127.0.0.1:6379"
+    Conn = "103.100.158.174:6379"
     Passwd = ""
