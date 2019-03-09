@@ -1,4 +1,4 @@
 .idea/*
-bin/logs/*
-bin/upload/*
-pkg/*
+bin/logs/
+bin/upload/
+pkg/
