@@ -71,7 +71,7 @@ func GetConfig() *Config {
 	return config
 }
 
-// 栏目管理
+// 栏目
 var menu *Menu
 func GetMenu() *Menu {
 	once.Do(func() {
@@ -80,13 +80,22 @@ func GetMenu() *Menu {
 	return menu
 }
 
-// 商品管理
+// 商品分类
 var goodsCategory *GoodsCategory
 func GetGoodsCategory() *GoodsCategory {
 	once.Do(func() {
 		goodsCategory = &GoodsCategory{}
 	})
 	return goodsCategory
+}
+
+// 商品
+var goods *Goods
+func GetGoods() *Goods {
+	once.Do(func() {
+		goods = &Goods{}
+	})
+	return goods
 }
 
 

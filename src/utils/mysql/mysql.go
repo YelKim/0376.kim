@@ -103,12 +103,10 @@ func (this *Mysql) Call (procName string, args ...interface{}) (string, error) {
 			}
 			list = append(list, info)
 		}
-		if len(list) > 0 {
-			if _, ok := list[0]["total"]; ok {
-				iResult["total"] = list[0]["total"]
-			} else {
-				iResult["list"] = list
-			}
+		if _, ok := iResult["list"]; ok {
+			iResult["total"] = list[0]["total"]
+		} else {
+			iResult["list"] = list
 		}
 		if !rows.NextResultSet() {
 			break

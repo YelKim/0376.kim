@@ -1,0 +1,186 @@
+{{ template "header.html"}}
+<nav class="breadcrumb">
+    <i class="Hui-iconfont">&#xe67f;</i> 首页
+    <span class="c-gray en">&gt;</span> 商品管理
+    <span class="c-gray en">&gt;</span> 商品列表
+    <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" >
+        <i class="Hui-iconfont">&#xe68f;</i>
+    </a>
+</nav>
+<div class="page-container">
+    <div class="text-l">
+        <input type="text" class="input-text" style="width:150px" placeholder="输入关键字" id="keyword" value="{{.keyword}}"/>
+        &nbsp;&nbsp;分类: <span class="select-box" style="width:130px;">
+           <select class="select" id="category_id" name="category_id">
+               <option value="-1" selected>全部</option>
+               {{range $k, $v := .goodsCategoryTree}}
+                   <option value="{{$v.Id}}" {{if eq $v.Id $.categoryId}}selected{{end}}>{{$v.Title}}</option>
+                    {{range $_k, $_v := $v.Children}}
+                       <option value="{{$_v.Id}}" {{if eq $_v.Id $.categoryId}}selected{{end}}>&nbsp;&nbsp;&nbsp;&nbsp;{{$_v.Title}}</option>
+                    {{end}}
+               {{end}}
+           </select>
+        </span>
+        &nbsp;&nbsp;状态: <span class="select-box" style="width:110px;">
+           <select class="select" id="deleted" name="deleted">
+               <option value="0" {{if eq 0 .deleted}}selected{{end}}>已上架</option>
+               <option value="1" {{if eq 1 .deleted}}selected{{end}}>已下架</option>
+           </select>
+        </span>
+        &nbsp;&nbsp;
+        <button type="button" onclick="goods.search();" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i> 搜商品</button>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="javascript:;" onclick="layer_show('添加','/goods-modify.html', 800)" class="btn btn-primary radius">
+                <i class="Hui-iconfont">&#xe600;</i> 添加
+            </a>
+        </span>
+        <span class="r">共有数据:<strong id="total">0</strong> 条</span>
+    </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort table-responsive">
+            <tr class="text-c">
+                <th>ID</th>
+                <th>名称</th>
+                <th>主图</th>
+                <th>分类</th>
+                <th>现价</th>
+                <th>原价</th>
+                <th>库存</th>
+                <th>计划发布</th>
+                <th>计划发布开始</th>
+                <th>计划发布结束</th>
+                <th>Title</th>
+                <th>Keyword</th>
+                <th>修改时间</th>
+                <th>操作</th>
+            </tr>
+            <tbody id="goodsTr"></tbody>
+        </table>
+        <div id="paginationDiv" class="mt-15" style="display: none;"></div>
+    </div>
+</div>
+{{ template "footer.html"}}
+<script type="text/javascript">
+var goods = {
+    //绑定数据到 tr
+    bindDataToTable: function (resault) {
+        var html = '';
+        if (resault.data) {
+            var planArr = ['否', '是'];
+            $.each(resault.data, function (i, e) {
+                var img = e.mainurl ? '<img src="'+ e.mainurl +'" height="50px"/>' : '';
+                html += '<tr class="text-c" val="'+ e.id +'" id="tr_'+ e.id +'">'
+                    + '<td>'+ e.id +'</td>'
+                    + '<td style="text-align: left;"><a href="javascript:;">'+ e.name +'</a></td>'
+                    + '<td>'+ img +'</td>'
+                    + '<td>'+ e.category_name +'</td>'
+                    + '<td>'+ e.price +'</td>'
+                    + '<td>'+ e.cost_price +'</td>'
+                    + '<td>'+ e.stock +'</td>'
+                    + '<td>'+ planArr[e.is_plan] +'</td>'
+                    + '<td>'+ ( e.plan_at > 0 ? moment(e.plan_at * 1000).format("YYYY/MM/DD HH:MM") : '') +'</td>'
+                    + '<td>'+ ( e.end_at > 0 ? moment(e.end_at * 1000).format("YYYY/MM/DD HH:MM") : '') +'</td>'
+                    + '<td style="text-align: left;">'+ e.title +'</td>'
+                    + '<td style="text-align: left;">'+ e.keyword +'</td>'
+                    + '<td>'+ moment(e.update_at * 1000).format("YYYY/MM/DD HH:MM") +'</td>'
+                    + '<td class="f-14 td-manage">'
+                        + '<a style="text-decoration:none" class="ml-5" onClick="layer_show(\'编辑商品\', \'/goods-modify.html?goods_id=' + e.id +'\', 800);" href="javascript:;" title="编辑">编辑</a>'
+                        + '<a style="text-decoration:none" class="ml-5" onClick="goods.release(this, '+ e.id +', '+ (e.deleted == 1 ? 0 : 1) +')" href="javascript:;" title="'+ ( e.deleted == 1 ? '上' : '下') +'架">'+ ( e.deleted == 1 ? '上' : '下') +'架</a>'
+                    + '</td></tr>';
+            });
+            $('#goodsTr').html(html);
+        }
+    },
+    //ajax 执行夹在分页数据
+    ajaxPage: function (page) {
+        var index = layer.load(0, {shade: false});
+        $.post('/goods-list.html', {
+            page: page,
+            keyword: $.trim($('#keyword').val()),
+            deleted: $('#deleted').val(),
+            category_id: $('#category_id').val()
+        }, function (res) {
+            layer.close(index);
+            if (res.data.total) {
+                laypage({
+                    cont: $('#paginationDiv'),
+                    pages: Math.ceil(res.data.total / res.data.pageSize),
+                    curr: page,
+                    skip: true,
+                    skin: '#5eb95e',//皮肤颜色
+                    groups: 5,
+                    jump: function (obj, first) {
+                        if (first) {
+                            $('#total').text(res.data.total);
+                            goods.bindDataToTable(res.data);
+                        } else {
+                            var index = layer.load(0, {shade: false});
+                            $.post('/goods-list.html', {
+                                page: obj.curr,
+                                keyword: $.trim($('#keyword').val()),
+                                deleted: $('#deleted').val(),
+                                category_id: $('#category_id').val()
+                            }, function (res) {
+                                layer.close(index);
+                                goods.bindDataToTable(res.data);
+                            }, 'json');
+                        }
+                    }
+                });
+                $('#paginationDiv').show();
+            } else {
+                $('#paginationDiv').hide();
+                $('#total').text(res.data.total);
+                goods.bindDataToTable(res.data);
+            }
+        }, 'json');
+        return;
+    },
+    //搜索
+    search: function () {
+        var _keyword = '';
+        var keyword = encodeURI($.trim($('#keyword').val()));
+        var deleted = $('#deleted').val();
+        var category_id = $('#category_id').val();
+        if ('' == keyword && category_id == -1 && deleted != 0 && deleted != 1) {
+            layer.msg('请输入关键字或选择分类');
+            return;
+        }
+        if (keyword) {
+            _keyword += '&keyword=' + keyword;
+        }
+        if (category_id) {
+            _keyword += '&category_id=' + category_id;
+        }
+        if (deleted) {
+            _keyword += '&deleted=' + deleted;
+        }
+        window.location.href = '/goods-list.html?page=1' + _keyword;
+    },
+    //删除
+    release: function (_this, id, deleted) {
+        layer.confirm('确定要'+ (deleted == 1 ? '下' : '上') +'架？', function () {
+            var index = layer.load(0, {shade: false});
+            $.post('/goods-del.html', {
+                goods_id: id,
+                deleted: deleted
+            }, function (msg) {
+                layer.close(index);
+                layer.msg(msg.message);
+                if (msg.code == 0) {
+                    window.location.reload();;
+                }
+            }, 'json');
+        });
+        return;
+    }
+};
+$(function(){
+    //ajax 加载
+    goods.ajaxPage(1);
+});
+</script>
+</body>
+</html>

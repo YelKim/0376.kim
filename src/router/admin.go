@@ -84,5 +84,12 @@ func GetAdminRouter() *gin.Engine {
 	r.GET("/goodscategory-modify.html", c.GoodsCategoryModify)    //编辑商品分类
 	r.POST("/goodscategory-modify.html", c.GoodsCategoryModify)   //ajax提交
 
+	// 商品管理
+	r.GET("/goods-list.html", c.GoodsList)      //商品列表页
+	r.POST("/goods-list.html", c.GoodsList)     //ajax获取商品列表数据
+	r.POST("/goods-del.html", c.GoodsDel)       //上、下架商品
+	r.GET("/goods-modify.html", c.GoodsModify)  //编辑商品
+	r.POST("/goods-modify.html", c.GoodsModify) //ajax提交
+
 	return r
 }

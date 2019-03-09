@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"sort"
 	"strconv"
@@ -80,6 +81,7 @@ func (this *GoodsCategory) ModifyGoodsCategory(title, imgurl string, parentId, s
 	jsonStr, _ := db.Call("Proc_GoodsCategory_modify_v1.0", title, parentId, _imgurl, sort, categoryId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
+	fmt.Println(info)
 	return info[0]["type"]
 }
 

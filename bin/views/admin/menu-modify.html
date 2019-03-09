@@ -64,10 +64,10 @@
 $(function(){
     //菜单等级
     $('#parent_id').change(function(){
-        var id = $('#id').val();
+        var id = $('#menu_id').val();
         var parent_id = $(this).val();
         if(parent_id == id){
-            layer.msg('不能选择自己作为父级菜单');
+            layer.msg('不能选择自己作为父类');
             $(this).val(0);
         }
     });

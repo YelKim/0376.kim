@@ -8,7 +8,7 @@
 				<select class="select" size="1" name="parent_id" id="parent_id">
 					<option value="0" selected>顶级分类</option>
                         {{range $k, $v := .goodsCategoryTree}}
-                            <option value="{{$v.Id}}" level="{{$v.Level}}" >{{$v.Title}}</option>
+                            <option value="{{$v.Id}}" level="{{$v.Level}}" {{if eq $v.Id $.info.ParentId}}selected{{end}}>{{$v.Title}}</option>
                         {{end}}
 				</select>
 				</span>
@@ -59,10 +59,10 @@ $(function(){
     });
     //菜单等级
     $('#parent_id').change(function(){
-        var id = $('#id').val();
+        var category_id = $('#category_id').val();
         var parent_id = $(this).val();
-        if(parent_id == id){
-            layer.msg('不能选择自己作为父级菜单');
+        if(category_id > 0 && parent_id == category_id){
+            layer.msg('不能选自己作为父类');
             $(this).val(0);
         }
     });
