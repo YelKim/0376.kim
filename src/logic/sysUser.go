@@ -25,7 +25,7 @@ type sysUserList struct {
 }
 
 // 分页获取管理员列表
-func (this *SysUser) GetUserListByPage (page int32, keyword  string) interface{} {
+func (this *SysUser) GetSysUserListByPage (page int32, keyword  string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysUser_pagination_v1.0", page, pageSize, keyword)
 	info := &sysUserList{}
 	json.Unmarshal([]byte(jsonStr), &info)

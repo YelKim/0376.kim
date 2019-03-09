@@ -144,7 +144,7 @@ func (this *AdminControl) SysUserList(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		keyword := c.DefaultPostForm("keyword", "")
 		page, _ := strconv.Atoi(c.DefaultPostForm("page", "1"))
-		iRelust := logic.GetSysUser().GetUserListByPage(int32(page), keyword)
+		iRelust := logic.GetSysUser().GetSysUserListByPage(int32(page), keyword)
 		returnJson(c, 0, iRelust)
 		return
 	}
