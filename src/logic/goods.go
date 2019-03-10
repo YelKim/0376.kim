@@ -2,9 +2,10 @@ package logic
 
 import (
 	"encoding/json"
+	"fmt"
 	"html"
 	"strings"
-	"utils"
+	"time"
 )
 
 type Goods struct {
@@ -13,18 +14,21 @@ type Goods struct {
 	Title        string   `json:"title" bson:"title"`                 //html title
 	Keyword      string   `json:"keyword" bson:"keyword"`             //html keyword
 	Description  string   `json:"description" bson:"description"`     //html description
-	CostPrice    float64  `json:"cost_price" bson:"cost_price"`       //原价
 	Stock        int64    `json:"stock" bson:"stock"`                 //库存
-	Price        float64  `json:"price" bson:"price"`                 //库存
+	CostPrice    float64  `json:"cost_price" bson:"cost_price"`       //原价
+	Price        float64  `json:"price" bson:"price"`                 //价格
 	Mainurl      string   `json:"mainurl" bson:"mainurl"`             //主图地址
 	Imgurl       string   `json:"imgurl" bson:"imgurl"`               //图片地址用”,”隔开
 	ImgurlArr    []string `json:"imgurl_arr" bson:"imgurl_arr"`       //图片地址列表
+	ImgurlLen    int      `json:"imgurl_len" bson:"imgurl_len"`       //图片地址列表
 	Details      string   `json:"details" bson:"details"`             //商品详情
 	TopLevel     int64    `json:"top_level" bson:"top_level"`         //商品顶级分类ID
 	CategoryId   int64    `json:"category_id" bson:"category_id"`     //分类ID
 	IsPlan       int64    `json:"is_plan" bson:"is_plan"`             //是否计划发布
 	PlanAt       int64    `json:"plan_at" bson:"plan_at"`             //计划开始时间
+	PlanAtTxt    string   `json:"plan_at_txt" bson:"plan_at_txt"`     //计划开始时间
 	EndAt        int64    `json:"end_at" bson:"end_at"`               //计划结束时间
+	EndAtTxt     string   `json:"end_at_txt" bson:"end_at_txt"`       //计划结束时间始时间
 	Deleted      int      `json:"deleted" bson:"deleted"`             // 状态 0:正常 1: 冻结
 	CategoryName string   `json:"category_name" bson:"category_name"` //分类名称
 	UpdateAt     string   `json:"update_at" bson:"update_at"`
@@ -60,17 +64,47 @@ func (this *Goods) GetGoodsInfoById (goodsId int64) *Goods {
 	jsonStr, _ := db.Call("Proc_Goods_infoById_v1.0", goodsId)
 	info := []*Goods{}
 	json.Unmarshal([]byte(jsonStr), &info)
-	info[0].ImgurlArr = strings.Split(info[0].Imgurl, ",")
+	info[0].ImgurlArr = append(info[0].ImgurlArr, info[0].Mainurl)
+	imgArr := strings.Split(info[0].Imgurl, ",")
+	for _, v := range imgArr {
+		if len(v) > 0 {
+			info[0].ImgurlArr = append(info[0].ImgurlArr, v)
+		}
+	}
+	if info[0].PlanAt > 0 {
+		info[0].PlanAtTxt = time.Unix(info[0].PlanAt, 0).Format("2006-01-02")
+	}
+	if info[0].EndAt > 0 {
+		info[0].EndAtTxt = time.Unix(info[0].EndAt, 0).Format("2006-01-02")
+	}
+	info[0].ImgurlLen = len(info[0].ImgurlArr)
 	info[0].Details = html.UnescapeString(info[0].Details)
+	fmt.Println(info)
 	return info[0]
 }
 
 // 添加、编辑商品
-func (this *Goods) ModifyGoods (nickname, phone, password, remark string, roleId, sex, adminId int64) int {
-	if len(password) > 0  {
-		password = utils.Md5(password)
+func (this *Goods) ModifyGoods (name, title, keyword, description string, cost_price, price float64, details, mainImg, imgurl string, categoryId, stock, adminId, isPlan int64, planAt, endAt string, goodsId int64) int {
+	//处理主图
+	_mainImg := ""
+	if len(mainImg) > 0 {
+		_mainImg = moveUpfile(mainImg, "goods")
 	}
-	jsonStr, _ := db.Call("Proc_Goods_modify_v1.0", nickname, phone, sex, password, remark, roleId, adminId)
+	// 处理图片列表
+	imgurlArr := strings.Split(imgurl, ",")
+	_imgurlArr := []string{}
+	for _, v := range imgurlArr {
+		if strings.Trim(v, "") == mainImg {
+			continue
+		}
+		if strings.Index(v, "/tmp/") > 0 {
+			v = moveUpfile(v, "goods")
+		}
+		if len(v) > 0 {
+			_imgurlArr = append(_imgurlArr, v)
+		}
+	}
+	jsonStr, _ := db.Call("Proc_Goods_modify_v1.0", name, title, keyword, description, cost_price, price, categoryId, stock, details, _mainImg, strings.Join(_imgurlArr, ","), isPlan, planAt, endAt, goodsId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
 	return info[0]["type"]

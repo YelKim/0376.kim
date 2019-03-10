@@ -41,6 +41,8 @@ func GetAdminRouter() *gin.Engine {
 	r.POST("/login.html", c.Login)    // ajax登录
 	r.GET("/captcha.html", c.Captcha) //验证码
 	r.POST("/upload.html", c.Upload)  // 图片上传
+	r.GET("/ueditor.html", c.Ueditor)  // 图片上传
+	r.POST("/ueditor.html", c.Ueditor)  // 图片上传
 
 	// 后台菜单
 	r.GET("/sysmenu-list.html", c.SysMenuList)        //后台菜单列表

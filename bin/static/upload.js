@@ -71,32 +71,23 @@ function filelistMouseEvent ($li, $btns) {
                     }
                     layer.msg("删除成功");
                 }
-                $('#' + fileid).remove();
-                if (imgLength == 1) {
-                    $placeHolder.removeClass('element-invisible');
-                    $statusBar.hide();
-                }
+                $("#" + fileid).remove()
                 var imgurl = $("#imgurl").val();
                 $("#imgurl").val(imgurl.replace("," + path, ""));
                 // 显示上传按钮
-                $statusBar.show();
+                if ( $queue.find("li").length > 0) {
+                    $placeHolder.addClass('element-invisible');
+                    $statusBar.show();
+                } else {
+                    $placeHolder.removeClass('element-invisible');
+                    $statusBar.hide();
+                }
                 break;
             case 1:
                 //设置主图
                 $("#mainurl").val(response.data.path);
                 layer.msg("设置主图成功");
                 break;
-        }
-        if (upload.supportTransition) {
-            deg = 'rotate(' + file.rotation + 'deg)';
-            $wrap.css({
-                '-webkit-transform': deg,
-                '-mos-transform': deg,
-                '-o-transform': deg,
-                'transform': deg
-            });
-        } else {
-            $wrap.css('filter', 'progid:DXImageTransform.Microsoft.BasicImage(rotation=' + (~~((file.rotation / 90) % 4 + 4) % 4) + ')');
         }
         uploader.refresh();
     });
@@ -225,9 +216,6 @@ var upload = {
 }
 
 $(function () {
-// 配置对象
-
-
     // 判断浏览器是否下载flash
     if (!WebUploader.Uploader.support('flash') && WebUploader.browser.ie) {
         // flash 安装了但是版本过低。
@@ -318,3 +306,10 @@ $(function () {
     // 查询filelist是否存在 增加鼠标事件
     filelistMouseEvent($(".filelist").find( 'li' ), $(".file-panel"));
 });
+
+if ($queue.find("li").length == 5) {
+    $statusBar.hide();
+} else if ( $queue.find("li").length > 0) {
+    $placeHolder.addClass('element-invisible');
+    $statusBar.show();
+}

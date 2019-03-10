@@ -47,13 +47,13 @@
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-2">原价:</label>
             <div class="formControls col-xs-8 col-sm-2">
-                <input type="text" class="input-text" placeholder="原价" name="cost_price" id="cost_price" value="{{.info.CostPrice}}"/>
+                <input type="text" class="input-text" placeholder="原价" name="cost_price" id="cost_price" value="{{.info.CostPrice|printf "%.2f"}}"/>
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2">现价:</label>
+            <label class="form-label col-xs-4 col-sm-2">价格:</label>
             <div class="formControls col-xs-8 col-sm-2">
-                <input type="text" class="input-text" placeholder="现价" name="price" id="price" value="{{.info.Price}}"/>
+                <input type="text" class="input-text" placeholder="价格" name="price" id="price" value="{{.info.Price|printf "%.2f"}}"/>
             </div>
         </div>
         <div class="row cl">
@@ -63,23 +63,16 @@
             </div>
         </div>
         <div class="row cl">
-            <label class="form-label col-xs-4 col-sm-2">图片上传：</label>
+            <label class="form-label col-xs-4 col-sm-2">图片上传:</label>
             <div class="formControls col-xs-8 col-sm-8">
                 <div class="uploader-list-container">
-                    <div class="queueList" style="display: {{if .info.Mainurl}}block{{else}}none{{end}};">
-                        <div id="dndArea" class="placeholder {{if .info.Mainurl}}element-invisible{{end}}" {{if .info.Mainurl}}style="display: none;"{{end}}>
+                    <div class="queueList">
+                        <div id="dndArea" class="placeholder {{if gt .info.ImgurlLen 0}}element-invisible{{end}}">
                             <div id="filePicker-2"></div>
                             <p>最多可选5张</p>
                         </div>
-                        {{if .info.Mainurl}}
+                        {{if gt .info.ImgurlLen 0}}
                             <ul class="filelist">
-                                <li id="WU_FILE_0">
-                                    <p class="imgWrap"><img src="{{.info.Mainurl}}"/></p>
-                                    <div class="file-panel" fileid="WU_FILE_0" path="{{.info.Mainurl}}" style="height: 0px;">
-                                        <span class="cancel">删除</span>
-                                        <span class="cancel">设置主图</span>
-                                    </div>
-                                </li>
                                 {{range $k, $v := .info.ImgurlArr}}
                                     <li id="WU_FILE_{{$k}}">
                                         <p class="imgWrap"><img src="{{$v}}"/></p>
@@ -92,7 +85,7 @@
                             </ul>
                         {{end}}
                     </div>
-                    <div class="statusBar" style="display:{{if .info.Mainurl}}none{{end}}">
+                    <div class="statusBar" style="display:{{if lt .info.ImgurlLen 5}}{{if gt .info.ImgurlLen 0}}block{{else}}none{{end}}{{else}}none{{end}};">
                         <div class="info"></div>
                         <div class="btns">
                             <div id="filePicker2"></div>
@@ -115,13 +108,13 @@
         <div class="row cl" id="plan_div" {{if eq 0 .info.IsPlan}}style="display:none;"{{end}}>
             <label class="form-label col-xs-4 col-sm-2">开始时间:</label>
             <div class="formControls col-xs-8 col-sm-3">
-                <input type="text" class="input-text Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" placeholder="预发布活动开始时间" name="plan_at" id="plan_at">
+                <input type="text" class="input-text Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" placeholder="预发布活动开始时间" name="plan_at" id="plan_at" value="{{.info.PlanAtTxt}}">
             </div>
         </div>
         <div class="row cl" id="end_div" {{if eq 0 .info.IsPlan}}style="display:none;"{{end}}>
             <label class="form-label col-xs-4 col-sm-2">结束时间:</label>
             <div class="formControls col-xs-8 col-sm-3">
-                <input type="text" class="input-text Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" placeholder="预发布活动结束时间" name="end_at" id="end_at">
+                <input type="text" class="input-text Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" placeholder="预发布活动结束时间" name="end_at" id="end_at" value="{{.info.EndAtTxt}}">
             </div>
         </div>
         <div class="row cl">
@@ -196,7 +189,16 @@ $(function() {
             name: "required",
             title: "required",
             keyword: "required",
-            price: "required",
+            price: {
+                required: true,
+                number: true,
+                min: 0.01
+            },
+            cost_price: {
+                required: true,
+                number: true,
+                min: 0.01
+            },
             stock: {
                 required: true,
                 number: true,
@@ -208,7 +210,8 @@ $(function() {
             name: "请输入名称",
             title: "请输入Title",
             keyword: "请输入Keyword",
-            price: "请输入现价",
+            price: "请输入价格",
+            cost_price: "请输入原价",
             stock: "请输入大于0的数",
 
         },

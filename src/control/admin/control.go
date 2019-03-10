@@ -4,6 +4,7 @@ import (
 	"conf"
 	"github.com/gin-gonic/gin"
 	"io"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -97,4 +98,76 @@ func (this *AdminControl) Upload(c *gin.Context) {
 	io.Copy(out, file)
 	returnJson(c, 0, gin.H{"path": strings.Trim(fileName, ".")})
 	return
+}
+
+//上传状态映射表，国际化用户需考虑此处数据的国际化
+var ueditorMap = gin.H{
+	"ERROR_SIZE_EXCEED":      "文件大小超出网站限制",
+	"ERROR_TYPE_NOT_ALLOWED": "文件类型不允许",
+	"ERROR_FILE_MOVE":        "文件保存时出错",
+	"ERROR_FILE_NOT_FOUND":   "找不到上传文件",
+}
+
+
+// 百度编辑器配置、文件上传
+func (this *AdminControl) Ueditor(c *gin.Context) {
+	action := c.DefaultQuery("action", "config")
+	switch action {
+	case "config":
+		file, err :=ioutil.ReadFile("./lib/ueditor/1.4.3/config.json")
+		if err != nil {
+			return
+		}
+		c.Header("Content-type", "application/json")
+		c.Writer.Write(file)
+		return
+	break
+	case "image":
+		file, header, err := c.Request.FormFile("upfile")
+		if err != nil {
+			c.JSON(200, gin.H{"tate": ueditorMap["ERROR_FILE_NOT_FOUND"]})
+			return
+		}
+		//判断文件的大小
+		if int32(header.Size) > conf.GetConfig().FileSize*1024*1024 {
+			c.JSON(200, gin.H{"tate": ueditorMap["ERROR_SIZE_EXCEED"]})
+			return
+		}
+		//判断文件格式
+		i := true
+		extArr := strings.Split(header.Header["Content-Type"][0], "/")
+		for _, v := range conf.GetConfig().FileExt {
+			if v == extArr[1] {
+				i = false
+				break
+			}
+		}
+		if i {
+			c.JSON(200, gin.H{"tate": ueditorMap["ERROR_TYPE_NOT_ALLOWED"]})
+			return
+		}
+		//判断文件夹是否存在
+		filePath := conf.GetConfig().StaticDir + "/tmp/" + time.Now().Format("20060102")
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			os.MkdirAll(filePath, 0755)
+		}
+		md5 := []rune(utils.Md5(strconv.Itoa(int(time.Now().UnixNano()))))
+		fileName := filePath + "/" + string(md5[8:24]) + "." + extArr[1]
+		out, err := os.Create(fileName)
+		if err != nil {
+			c.JSON(200, gin.H{"tate": ueditorMap["ERROR_FILE_MOVE"]})
+			return
+		}
+		defer out.Close()
+		io.Copy(out, file)
+		c.JSON(200, gin.H{
+			"state": "SUCCESS",
+			"url": strings.Trim(fileName, "."),
+			"title": header.Filename,
+			"original": header.Filename,
+			"type": extArr[1],
+			"size": header.Size,
+		})
+		return
+	}
 }
