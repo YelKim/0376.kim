@@ -55,7 +55,7 @@ $(function() {
             layer.msg('请输入验证码');
         }
         var index = layer.load(0, {shade: false});
-        $.post('/admin/login.html', $('#login_form').serialize(), function (msg) {
+        $.post('/login.html', $('#login_form').serialize(), function (msg) {
             layer.close(index);
             layer.msg(msg.message);
             if (msg.code == 0) {

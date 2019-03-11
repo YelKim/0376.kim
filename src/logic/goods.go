@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -15,8 +16,8 @@ type Goods struct {
 	Keyword      string   `json:"keyword" bson:"keyword"`             //html keyword
 	Description  string   `json:"description" bson:"description"`     //html description
 	Stock        int64    `json:"stock" bson:"stock"`                 //库存
-	CostPrice    float64  `json:"cost_price" bson:"cost_price"`       //原价
-	Price        float64  `json:"price" bson:"price"`                 //价格
+	CostPrice    string   `json:"cost_price" bson:"cost_price"`       //原价
+	Price        string   `json:"price" bson:"price"`                 //价格
 	Mainurl      string   `json:"mainurl" bson:"mainurl"`             //主图地址
 	Imgurl       string   `json:"imgurl" bson:"imgurl"`               //图片地址用”,”隔开
 	ImgurlArr    []string `json:"imgurl_arr" bson:"imgurl_arr"`       //图片地址列表
@@ -79,7 +80,11 @@ func (this *Goods) GetGoodsInfoById (goodsId int64) *Goods {
 	}
 	info[0].ImgurlLen = len(info[0].ImgurlArr)
 	info[0].Details = html.UnescapeString(info[0].Details)
-	fmt.Println(info)
+	price, _ := strconv.ParseFloat(info[0].Price, 64)
+	info[0].Price = fmt.Sprintf("%.2f", price)
+	cost_price, _ := strconv.ParseFloat(info[0].CostPrice, 64)
+	info[0].CostPrice = fmt.Sprintf("%.2f", cost_price)
+	// 转换价格
 	return info[0]
 }
 
