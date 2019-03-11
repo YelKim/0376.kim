@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/gin-gonic/gin"
+	"math/rand"
 	"strconv"
 	"sync"
 	"time"
@@ -19,7 +20,7 @@ type Session struct {
 //Session会话管理
 type SessionMgr struct {
 	mLock     sync.RWMutex //互斥(保证线程安全)
-	mExpire  int64        //垃圾回收时间
+	mExpire  int64        //定时器
 	mSessions map[string]*Session
 }
 
@@ -35,7 +36,7 @@ func GetSeesionMgr(c *gin.Context) *SessionMgr {
 	var err error
 	SessionId, err = c.Cookie("0376.kim")
 	if err != nil || SessionId == "" {
-		SessionId = Md5(strconv.Itoa(int(time.Now().UnixNano())))
+		SessionId = Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(rand.Intn(10)))
 	}
 	//设置浏览器cookie
 	c.SetCookie("0376.kim", SessionId, 300, "/", c.GetHeader("Host"), false, true)
@@ -45,11 +46,18 @@ func GetSeesionMgr(c *gin.Context) *SessionMgr {
 }
 
 //设置session
-func (this *SessionMgr) Set (name string,  value interface{}) {
+func (this *SessionMgr) Set (name string, value interface{}) {
 	if s, ok := this.mSessions[name]; ok {
 		s.mLock.RLock()
 		defer s.mLock.RUnlock()
 		s.mSession[name] = value
+	} else {
+		data := make(map[string]interface{})
+		data[name] = value
+		this.mSessions[SessionId] = &Session{
+			mSession: data,
+			mExpire: time.Now().Unix(),
+		}
 	}
 }
 

@@ -8,6 +8,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"utils"
 )
 
 //首页
@@ -38,6 +39,25 @@ func (this *AdminControl) Welcome(c *gin.Context) {
 //登录
 func (this *AdminControl) Login(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
+		code := c.DefaultPostForm("captcha", "")
+		account := c.DefaultPostForm("account", "")
+		password := c.DefaultPostForm("password", "")
+		reald := utils.GetSeesionMgr(c).Get("captcha")
+		if len(code) == 0{
+			returnJson(c, 1018, nil)
+			return
+		}
+		if len(password) == 0 || len(account) == 0 {
+			returnJson(c, 1019, nil)
+			return
+		}
+		// 验证验证码
+		if  reald == nil || !captcha.VerifyString(reald.(string), code) {
+			returnJson(c, 1022, nil)
+			return
+		}
+		iResult := logic.GetSysUser().Login(account, utils.Md5(strings.Trim(password, "")))
+		returnJson(c, iResult, nil)
 		return
 	}
 	returnHtml(c, "login.html", nil)
@@ -47,6 +67,7 @@ func (this *AdminControl) Login(c *gin.Context) {
 //验证码
 func (this *AdminControl) Captcha(c *gin.Context) {
 	code := captcha.NewLen(4)
+	utils.GetSeesionMgr(c).Set("captcha", code)
 	captcha.WriteImage(c.Writer, code, 100, 40)
 	return
 }

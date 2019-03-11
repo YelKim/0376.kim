@@ -62,3 +62,21 @@ func (this *SysUser) ModifySysUser (nickname, phone, password, remark string, ro
 	json.Unmarshal([]byte(jsonStr), &info)
 	return info[0]["type"]
 }
+
+//后台登录
+func (this *SysUser) Login (acconut, password string) int {
+	jsonStr, _ := db.Call("Proc_SysUser_login_v1.0", acconut, password)
+	info := []*SysUser{}
+	json.Unmarshal([]byte(jsonStr), &info)
+	if len(info) == 0 {
+		return 1021
+	}
+	if info[0].Deleted == 1 {
+		return 1020
+	}
+	//保存session
+
+	return 0
+}
+
+
