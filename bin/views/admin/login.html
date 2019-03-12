@@ -59,7 +59,7 @@ $(function() {
             layer.close(index);
             layer.msg(msg.message);
             if (msg.code == 0) {
-                window.location.href = '/index.html';
+                window.location.href = '/';
             } else {
                 $('#captcha').val('');
                 $('#captcha_img').attr('src', '/captcha.html?t=' + Math.random());

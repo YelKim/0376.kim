@@ -15,7 +15,11 @@ import (
 func (this *AdminControl) Index(c *gin.Context) {
 	// 获取后台左侧菜单
 	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(2)
-	returnHtml(c, "index.html", gin.H{"menuTree": menuTree})
+	sysInfo := utils.GetSeesionMgr(c).Get("sysInfo")
+	returnHtml(c, "index.html", gin.H{
+		"menuTree": menuTree,
+		"info": sysInfo,
+	})
 	return
 }
 
@@ -56,7 +60,7 @@ func (this *AdminControl) Login(c *gin.Context) {
 			returnJson(c, 1022, nil)
 			return
 		}
-		iResult := logic.GetSysUser().Login(account, utils.Md5(strings.Trim(password, "")))
+		iResult := logic.GetSysUser().Login(account, utils.Md5(strings.Trim(password, "")), c)
 		returnJson(c, iResult, nil)
 		return
 	}
@@ -69,5 +73,12 @@ func (this *AdminControl) Captcha(c *gin.Context) {
 	code := captcha.NewLen(4)
 	utils.GetSeesionMgr(c).Set("captcha", code)
 	captcha.WriteImage(c.Writer, code, 100, 40)
+	return
+}
+
+//验证码
+func (this *AdminControl) logout(c *gin.Context) {
+	utils.GetSeesionMgr(c).Set("sysInfo", nil)
+	c.Redirect(200, "/")
 	return
 }

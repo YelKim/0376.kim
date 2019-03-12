@@ -12,15 +12,15 @@ var SessionId string
 
 //Session数据
 type Session struct {
-	mLock    sync.RWMutex //互斥(保证线程安全)
-	mExpire  int64        //垃圾回收时间
-	mSession map[string]interface{}
+	mSessionId string
+	mLastTime  int64
+	mValues    map[string]interface{}
 }
 
 //Session会话管理
 type SessionMgr struct {
 	mLock     sync.RWMutex //互斥(保证线程安全)
-	mExpire  int64        //定时器
+	mExpire   int64        //定时器
 	mSessions map[string]*Session
 }
 
@@ -47,24 +47,27 @@ func GetSeesionMgr(c *gin.Context) *SessionMgr {
 
 //设置session
 func (this *SessionMgr) Set (name string, value interface{}) {
-	if s, ok := this.mSessions[name]; ok {
-		s.mLock.RLock()
-		defer s.mLock.RUnlock()
-		s.mSession[name] = value
+	this.mLock.RLock()
+	defer this.mLock.RUnlock()
+	if s, ok := this.mSessions[SessionId]; ok {
+		s.mValues[name] = value
+		s.mLastTime = time.Now().Unix()
 	} else {
-		data := make(map[string]interface{})
-		data[name] = value
-		this.mSessions[SessionId] = &Session{
-			mSession: data,
-			mExpire: time.Now().Unix(),
+		val := make(map[string]interface{})
+		val[name] = value
+		session := &Session{
+			mSessionId: SessionId,
+			mLastTime: time.Now().Unix(),
+			mValues: val,
 		}
+		this.mSessions[SessionId] = session
 	}
 }
 
 //读取session
 func (this *SessionMgr) Get(name string) interface{} {
 	if s, ok := this.mSessions[SessionId]; ok {
-		if v, ok := s.mSession[name]; ok {
+		if v, ok := s.mValues[name]; ok {
 			return v
 		}
 	}
@@ -79,7 +82,7 @@ func (this *SessionMgr) gc() {
 	if time.Now().Unix() > this.mExpire {
 		for k, s := range this.mSessions {
 			//删除超过时限的session
-			if time.Now().Unix() > s.mExpire {
+			if time.Now().Unix() - s.mLastTime == 1800 {
 				delete(this.mSessions, k)
 			}
 		}

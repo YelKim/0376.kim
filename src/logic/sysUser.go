@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"utils"
 )
 
@@ -64,7 +65,7 @@ func (this *SysUser) ModifySysUser (nickname, phone, password, remark string, ro
 }
 
 //后台登录
-func (this *SysUser) Login (acconut, password string) int {
+func (this *SysUser) Login (acconut, password string, c *gin.Context) int {
 	jsonStr, _ := db.Call("Proc_SysUser_login_v1.0", acconut, password)
 	info := []*SysUser{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -75,7 +76,7 @@ func (this *SysUser) Login (acconut, password string) int {
 		return 1020
 	}
 	//保存session
-
+	utils.GetSeesionMgr(c).Set("sysInfo", info[0])
 	return 0
 }
 

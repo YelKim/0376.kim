@@ -4,15 +4,31 @@ import (
 	"control"
 	"github.com/gin-gonic/gin"
 	"path/filepath"
+	"strings"
+	"utils"
 )
 
 var adminRouter *gin.Engine
 
-//// 中间件
-//func adminMiddleware(c *gin.Context) {
-//	control.Session = utils.GetSeesionMgr(c)
-//	c.Next()
-//}
+// 中间件 验证是否登录
+func adminMiddleware(c *gin.Context) {
+	urlArr := []string{ "/favicon.ico", "/static", "/captcha.html", "/upload", "/login.html"}
+	bool := true
+	for _, v := range urlArr{
+		if strings.Index(c.Request.URL.Path, v) > -1 {
+			bool = false
+			break
+		}
+	}
+	if bool {
+		sysInfo := utils.GetSeesionMgr(c).Get("sysInfo")
+		if sysInfo == nil {
+			c.Redirect(301, "/login.html")
+			return
+		}
+	}
+	c.Next()
+}
 
 // 获取后台路由实例
 func GetAdminRouter() *gin.Engine {
@@ -25,17 +41,15 @@ func GetAdminRouter() *gin.Engine {
 	r.LoadHTMLGlob(viewPath)
 
 	// 使用中间件、过滤session登录
-	//r.Use(adminMiddleware)
+	r.Use(adminMiddleware)
 
 	// 静态路由
 	r.Static("/upload", "./upload") //上传目录
 	r.Static("/static", "./static") //静态文件
-	r.Static("/lib", "./lib")       //静态文件
 
 	// 基本路由
+	r.GET("/", c.Index)     //首页
 	r.GET("/index.html", c.Index)     //首页
-	r.GET("/", c.Index)               //首页
-	r.GET("/index", c.Index)          //首页
 	r.GET("/welcome.html", c.Welcome) //欢迎页
 	r.GET("/login.html", c.Login)     // 登录页
 	r.POST("/login.html", c.Login)    // ajax登录
