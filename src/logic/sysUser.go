@@ -6,27 +6,35 @@ import (
 	"utils"
 )
 
+type ISysUser interface {
+	GetSysUserListByPage(int32, string) interface{}
+	DelSysUserById(int64) int
+	GetUserInfoById(int64) *SysUser
+	ModifySysUser(string, string, string, string, int64, int64, int64) int
+	Login(string, string, *gin.Context) int
+}
+
 type SysUser struct {
-	Id       int32  `json:"id" bson:"id"`
-	Nickname string `json:"nickname" bson:"nickname"`   // 昵称
-	Password string `json:"password" bson:"password"`   // 密码
-	Phone    string `json:"phone" bson:"phone"`         // 手机号
-	Sex      int    `json:"sex" bson:"sex"`             // 性别 0: 女 1: 男
-	RoleId   int    `json:"role_id" bson:"role_id"`     // 角色ID
-	Remark   string `json:"remark" bson:"remark"`       // 备注
+	Id       int32
+	Nickname string                                     // 昵称
+	Password string                                     // 密码
+	Phone    string                                     // 手机号
+	Sex      int                                        // 性别 0: 女 1: 男
+	RoleId   int `json:"role_id" bson:"role_id"`        // 角色ID
+	Remark   string                                     // 备注
 	RoleName string `json:"role_name" bson:"role_name"` // 角色名称
-	Times    int32  `json:"times" bson:"times"`         // 登录次数
-	Deleted  int    `json:"deleted" bson:"deleted"`     // 状态 0:正常 1: 冻结
-	CreateAt int64  `json:"create_at" bson:"create_at"`
+	Times    int32                                      // 登录次数
+	Deleted  int                                        // 状态 0:正常 1: 冻结
+	CreateAt int64 `json:"create_at" bson:"create_at"`
 }
 
 type sysUserList struct {
-	List  []*SysUser `json:"list" bson:"list"`
-	Total int64      `json:"total" bson:"total"`
+	List  []*SysUser
+	Total int64
 }
 
 // 分页获取管理员列表
-func (this *SysUser) GetSysUserListByPage (page int32, keyword  string) interface{} {
+func (this *SysUser) GetSysUserListByPage (page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysUser_pagination_v1.0", page, pageSize, keyword)
 	info := &sysUserList{}
 	json.Unmarshal([]byte(jsonStr), &info)

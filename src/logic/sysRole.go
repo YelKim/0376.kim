@@ -4,20 +4,28 @@ import (
 	"encoding/json"
 )
 
+type ISysRole interface {
+	GetRoleListByPage(int32, string) interface{}
+	GetRoleInfoById(int64) *SysRole
+	ModifySysRole(int64, string, string, string) int
+	GetSysRoleMenuListByRoleId(rolId int64) []int32
+	GetSysRoleList() []*SysRole
+}
+
 type SysRole struct {
-	Id      int32  `json:"id" bson:"id"`
-	Title   string `json:"title" bson:"title"`   //角色名称
-	Remark  string `json:"remark" bson:"remark"` //备注
-	UpateAt int64  `json:"update_at" bson:"update_at"`
+	Id      int32
+	Title   string //角色名称
+	Remark  string //备注
+	UpateAt int64 `json:"update_at" bson:"update_at"`
 }
 
 type sysRoleList struct {
-	List  []*SysRole `json:"list" bson:"list"`
-	Total int64      `json:"total" bson:"total"`
+	List  []*SysRole
+	Total int64
 }
 
 // 分页获取管理员角色列表
-func (this *SysRole) GetRoleListByPage (page int32, keyword  string) interface{} {
+func (this *SysRole) GetRoleListByPage (page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysRole_pagination_v1.0", page, pageSize, keyword)
 	info := &sysRoleList{}
 	json.Unmarshal([]byte(jsonStr), &info)

@@ -9,35 +9,42 @@ import (
 	"time"
 )
 
+type IGoods interface {
+	GetGoodListByPage(int64, int64, int64, string) interface{}
+	DelGoodsById(int64 int64) int
+	GetGoodsInfoById(int64) *Goods
+	ModifyGoods(string, string, string, string, float64, float64, string, string, string, int64, int64, int64, int64, string, string, int64) int
+}
+
 type Goods struct {
-	Id           int32    `json:"id" bson:"id"`
-	Name         string   `json:"name" bson:"name"`                   //商品名称
-	Title        string   `json:"title" bson:"title"`                 //html title
-	Keyword      string   `json:"keyword" bson:"keyword"`             //html keyword
-	Description  string   `json:"description" bson:"description"`     //html description
-	Stock        int64    `json:"stock" bson:"stock"`                 //库存
-	CostPrice    string   `json:"cost_price" bson:"cost_price"`       //原价
-	Price        string   `json:"price" bson:"price"`                 //价格
-	Mainurl      string   `json:"mainurl" bson:"mainurl"`             //主图地址
-	Imgurl       string   `json:"imgurl" bson:"imgurl"`               //图片地址用”,”隔开
-	ImgurlArr    []string `json:"imgurl_arr" bson:"imgurl_arr"`       //图片地址列表
-	ImgurlLen    int      `json:"imgurl_len" bson:"imgurl_len"`       //图片地址列表
-	Details      string   `json:"details" bson:"details"`             //商品详情
-	TopLevel     int64    `json:"top_level" bson:"top_level"`         //商品顶级分类ID
-	CategoryId   int64    `json:"category_id" bson:"category_id"`     //分类ID
-	IsPlan       int64    `json:"is_plan" bson:"is_plan"`             //是否计划发布
-	PlanAt       int64    `json:"plan_at" bson:"plan_at"`             //计划开始时间
-	PlanAtTxt    string   `json:"plan_at_txt" bson:"plan_at_txt"`     //计划开始时间
-	EndAt        int64    `json:"end_at" bson:"end_at"`               //计划结束时间
-	EndAtTxt     string   `json:"end_at_txt" bson:"end_at_txt"`       //计划结束时间始时间
-	Deleted      int      `json:"deleted" bson:"deleted"`             // 状态 0:正常 1: 冻结
-	CategoryName string   `json:"category_name" bson:"category_name"` //分类名称
-	UpdateAt     string   `json:"update_at" bson:"update_at"`
+	Id           int32
+	Name         string                                             //商品名称
+	Title        string                                             //html title
+	Keyword      string                                             //html keyword
+	Description  string                                             //html description
+	Stock        int64                                              //库存
+	CostPrice    string `json:"cost_price" bson:"cost_price"`       //原价
+	Price        string                                             //价格
+	Mainurl      string                                             //主图地址
+	Imgurl       string                                             //图片地址用”,”隔开
+	ImgurlArr    []string `json:"imgurl_arr" bson:"imgurl_arr"`     //图片地址列表
+	ImgurlLen    int      `json:"imgurl_len" bson:"imgurl_len"`     //图片地址列表
+	Details      string                                             //商品详情
+	TopLevel     int64  `json:"top_level" bson:"top_level"`         //商品顶级分类ID
+	CategoryId   int64  `json:"category_id" bson:"category_id"`     //分类ID
+	IsPlan       int64  `json:"is_plan" bson:"is_plan"`             //是否计划发布
+	PlanAt       int64  `json:"plan_at" bson:"plan_at"`             //计划开始时间
+	PlanAtTxt    string `json:"plan_at_txt" bson:"plan_at_txt"`     //计划开始时间
+	EndAt        int64  `json:"end_at" bson:"end_at"`               //计划结束时间
+	EndAtTxt     string `json:"end_at_txt" bson:"end_at_txt"`       //计划结束时间始时间
+	Deleted      int                                                // 状态 0:正常 1: 冻结
+	CategoryName string `json:"category_name" bson:"category_name"` //分类名称
+	UpdateAt     string `json:"update_at" bson:"update_at"`
 }
 
 type goodsList struct {
-	List  []*Goods `json:"list" bson:"list"`
-	Total int64    `json:"total" bson:"total"`
+	List  []*Goods
+	Total int64
 }
 
 // 分页获取商品列表

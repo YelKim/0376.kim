@@ -6,15 +6,24 @@ import (
 	"sort"
 )
 
+type iSysMenu interface {
+	GetSysMenuListByPage(int32, string) interface{}
+	GetSysMenuChildListByParentId(int64) interface{}
+	GetSysMenuInfoById(int64) *SysMenu
+	DelSysMenuById(int64) int
+	ModifySysMenu(int64, int64, int64, string, string, string, string) int
+	GetSysMenuListByLevel(int) []*sysMenuTree
+}
+
 type SysMenuInfo struct {
-	Id       int32         `json:"id" bson:"id"`
-	Title    string        `json:"title" bson:"title"`         //菜单名称
-	Icon     string `json:"icon" bson:"icon"`           //一级菜单图标
-	Control  string        `json:"control" bson:"control"`     //controller
-	Action   string        `json:"action" bson:"action"`       // action
-	Sort     int32         `json:"sort" bson:"sort"`           //排序
-	ParentId int32         `json:"parent_id" bson:"parent_id"` // 无限分类 父类ID
-	Level    int8          `json:"level" bson:"level"`         // 层级
+	Id       int32
+	Title    string                                    //菜单名称
+	Icon     string                                    //一级菜单图标
+	Control  string                                    //controller
+	Action   string                                    // action
+	Sort     int32                                     //排序
+	ParentId int32 `json:"parent_id" bson:"parent_id"` // 无限分类 父类ID
+	Level    int8                                      // 层级
 }
 
 type SysMenu struct {
@@ -24,12 +33,17 @@ type SysMenu struct {
 }
 
 type sysMenuList struct {
-	List  []*SysMenu `json:"list" bson:"list"`
-	Total int64      `json:"total" bson:"total"`
+	List  []*SysMenu
+	Total int64
+}
+
+type sysMenuTree struct {
+	SysMenuInfo
+	Children []*sysMenuTree
 }
 
 // 分页获取后台菜单列表
-func (this *SysMenu) GetSysMenuListByPage (page int32, keyword  string) interface{} {
+func (this *SysMenu) GetSysMenuListByPage (page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysMenu_pagination_v1.0", page, pageSize, keyword)
 	info := &sysMenuList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -70,11 +84,6 @@ func (this *SysMenu) ModifySysMenu (menuId, parentId, sort int64, title, icon, c
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
 	return info[0]["type"]
-}
-
-type sysMenuTree struct {
-	SysMenuInfo
-	Children []*sysMenuTree `json:"children" bson:"children"`
 }
 
 // 根据等级获取菜单列表

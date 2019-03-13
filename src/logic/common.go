@@ -35,6 +35,11 @@ func moveUpfile(fileName, folder string) string {
 	return newFileName
 }
 
+type IsysMenu interface {
+	GetSysMenuListByPage (page int32, keyword  string)
+	GetSysMenuChildListByParentId (parentId int64)
+}
+
 // 后台菜单
 var sysMenu *SysMenu
 func GetSysMenu() *SysMenu {
@@ -46,6 +51,8 @@ func GetSysMenu() *SysMenu {
 
 // 管理员角色
 var sysRole *SysRole
+
+
 func GetSysRole() *SysRole {
 	once.Do(func() {
 		sysRole = &SysRole{}

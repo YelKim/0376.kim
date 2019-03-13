@@ -6,26 +6,31 @@ import (
 	"reflect"
 )
 
+type IConfig interface {
+	ModifyConfig(int, string) int
+	GetConfigInfoByType(int) map[string]interface{}
+}
+
 type Config struct {
-	Id      int32  `json:"id" bson:"id"`
-	Type    int32  `json:"type" bson:"type"`       //类型  1：基础配置
-	Content string `json:"content" bson:"content"` // 配置内容json字符串
-	UpateAt int64  `json:"update_at" bson:"update_at"`
+	Id      int32
+	Type    int32  //类型  1：基础配置
+	Content string // 配置内容json字符串
+	UpateAt int64 `json:"update_at" bson:"update_at"`
 }
 
 // 全局SEO配置
 type SeoConfig struct {
-	Keyword    string `json:"keyword" bson:"keyword"`          // 关键字
-	Description string `json:"description" bson:"description"` // 描述
+	Keyword     string // 关键字
+	Description string // 描述
 }
 
 // 全局SEO配置
 type InfoConfig struct {
-	Platform  string `json:"platform" bson:"platform"`   // 关键字
+	Platform string                                     // 关键字
 	RecordNo string `json:"record_no" bson:"record_no"` // 版权
-	Wx        string `json:"wx" bson:"wx"`               // 公众号
-	Tel       string `json:"tel" bson:"tel"`             // 电话
-	Address   string `json:"address" bson:"address"`     // 公司地址
+	Wx       string                                     // 公众号
+	Tel      string                                     // 电话
+	Address  string                                     // 公司地址
 }
 
 

@@ -8,13 +8,22 @@ import (
 	"strconv"
 )
 
+type IGoodsCategory interface {
+	GetGoodsCategoryListByPage(int32, string) interface{}
+	GetGoodsCategoryChildListByParentId(int64) interface{}
+	DelGoodsCategoryById(int64) int
+	GetGoodsCategoryInfoById(int64) *GoodsCategory
+	ModifyGoodsCategory(string, string, int64, int64, int64) int
+	GetGoodsCategoryListByLevel(int) []*goodsCategoryTree
+}
+
 type GoodsCategoryInfo struct {
-	Id       int32  `json:"id" bson:"id"`
-	Title    string `json:"title" bson:"title"`         // 分类名称
-	Imgurl   string `json:"imgurl" bson:"imgurl"`       // 图标
-	Sort     int32  `json:"sort" bson:"sort"`           //排序
-	ParentId int32  `json:"parent_id" bson:"parent_id"` //无限分类 父类ID
-	Level    int8   `json:"level" bson:"level"`         //层级
+	Id       int32
+	Title    string                                    // 分类名称
+	Imgurl   string                                    // 图标
+	Sort     int32                                     //排序
+	ParentId int32 `json:"parent_id" bson:"parent_id"` //无限分类 父类ID
+	Level    int8                                      //层级
 }
 
 type GoodsCategory struct {
@@ -24,8 +33,13 @@ type GoodsCategory struct {
 }
 
 type goodsCategoryList struct {
-	List  []*GoodsCategory `json:"list" bson:"list"`
-	Total int64            `json:"total" bson:"total"`
+	List  []*GoodsCategory
+	Total int64
+}
+
+type goodsCategoryTree struct {
+	GoodsCategoryInfo
+	Children []*goodsCategoryTree
 }
 
 // 分页获取栏目列表
@@ -83,11 +97,6 @@ func (this *GoodsCategory) ModifyGoodsCategory(title, imgurl string, parentId, s
 	json.Unmarshal([]byte(jsonStr), &info)
 	fmt.Println(info)
 	return info[0]["type"]
-}
-
-type goodsCategoryTree struct {
-	GoodsCategoryInfo
-	Children []*goodsCategoryTree `json:"children" bson:"children"`
 }
 
 // 根据等级获取菜单列表
