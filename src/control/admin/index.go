@@ -15,7 +15,8 @@ import (
 func (this *AdminControl) Index(c *gin.Context) {
 	// 获取后台左侧菜单
 	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(2)
-	sysInfo := utils.GetSeesionMgr(c).Get("sysInfo")
+	sessionId, _ := c.Cookie("session_id")
+	sysInfo := utils.GetSeesionMgr(c).Get(sessionId,"sysInfo")
 	returnHtml(c, "index.html", gin.H{
 		"menuTree": menuTree,
 		"info": sysInfo,
@@ -46,7 +47,8 @@ func (this *AdminControl) Login(c *gin.Context) {
 		code := c.DefaultPostForm("captcha", "")
 		account := c.DefaultPostForm("account", "")
 		password := c.DefaultPostForm("password", "")
-		reald := utils.GetSeesionMgr(c).Get("captcha")
+		sessionId, _ := c.Cookie("session_id")
+		reald := utils.GetSeesionMgr(c).Get(sessionId,"captcha")
 		if len(code) == 0{
 			returnJson(c, 1018, nil)
 			return
@@ -71,14 +73,16 @@ func (this *AdminControl) Login(c *gin.Context) {
 //验证码
 func (this *AdminControl) Captcha(c *gin.Context) {
 	code := captcha.NewLen(4)
-	utils.GetSeesionMgr(c).Set("captcha", code)
+	sessionId, _ := c.Cookie("session_id")
+	utils.GetSeesionMgr(c).Set(sessionId, "captcha", code)
 	captcha.WriteImage(c.Writer, code, 100, 40)
 	return
 }
 
 //验证码
-func (this *AdminControl) logout(c *gin.Context) {
-	utils.GetSeesionMgr(c).Set("sysInfo", nil)
+func (this *AdminControl) Logout(c *gin.Context) {
+	sessionId, _ := c.Cookie("session_id")
+	utils.GetSeesionMgr(c).Set(sessionId, "sysInfo", nil)
 	c.Redirect(200, "/")
 	return
 }

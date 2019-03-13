@@ -76,7 +76,8 @@ func (this *SysUser) Login (acconut, password string, c *gin.Context) int {
 		return 1020
 	}
 	//保存session
-	utils.GetSeesionMgr(c).Set("sysInfo", info[0])
+	sessionId, _ := c.Cookie("session_id")
+	utils.GetSeesionMgr(c).Set(sessionId, "sysInfo", info[0])
 	return 0
 }
 

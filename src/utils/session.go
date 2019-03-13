@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-var SessionId string
-
 //Session数据
 type Session struct {
 	mSessionId string
@@ -34,39 +32,39 @@ func GetSeesionMgr(c *gin.Context) *SessionMgr {
 		}
 	}
 	var err error
-	SessionId, err = c.Cookie("0376.kim")
-	if err != nil || SessionId == "" {
-		SessionId = Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(rand.Intn(10)))
+	sessionId, err := c.Cookie("session_id")
+	if err != nil || sessionId == "" {
+		sessionId = Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(rand.Intn(10)))[8:24]
 	}
 	//设置浏览器cookie
-	c.SetCookie("0376.kim", SessionId, 300, "/", c.GetHeader("Host"), false, true)
+	c.SetCookie("session_id", sessionId, 300, "/", c.GetHeader("Host"), false, true)
 	//垃圾回收
 	go sessionMgr.gc()
 	return sessionMgr
 }
 
 //设置session
-func (this *SessionMgr) Set (name string, value interface{}) {
+func (this *SessionMgr) Set (sessionId, name string, value interface{}) {
 	this.mLock.RLock()
 	defer this.mLock.RUnlock()
-	if s, ok := this.mSessions[SessionId]; ok {
+	if s, ok := this.mSessions[sessionId]; ok {
 		s.mValues[name] = value
 		s.mLastTime = time.Now().Unix()
 	} else {
 		val := make(map[string]interface{})
 		val[name] = value
 		session := &Session{
-			mSessionId: SessionId,
-			mLastTime: time.Now().Unix(),
-			mValues: val,
+			mSessionId: sessionId,
+			mLastTime:  time.Now().Unix(),
+			mValues:    val,
 		}
-		this.mSessions[SessionId] = session
+		this.mSessions[sessionId] = session
 	}
 }
 
 //读取session
-func (this *SessionMgr) Get(name string) interface{} {
-	if s, ok := this.mSessions[SessionId]; ok {
+func (this *SessionMgr) Get(sessionId, name string) interface{} {
+	if s, ok := this.mSessions[sessionId]; ok {
 		if v, ok := s.mValues[name]; ok {
 			return v
 		}
