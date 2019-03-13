@@ -34,7 +34,7 @@ type sysUserList struct {
 }
 
 // 分页获取管理员列表
-func (this *SysUser) GetSysUserListByPage (page int32, keyword string) interface{} {
+func (su *SysUser) GetSysUserListByPage (page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysUser_pagination_v1.0", page, pageSize, keyword)
 	info := &sysUserList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -46,7 +46,7 @@ func (this *SysUser) GetSysUserListByPage (page int32, keyword string) interface
 }
 
 // 冻结管理员
-func (this *SysUser) DelSysUserById (userId int64) int {
+func (su *SysUser) DelSysUserById (userId int64) int {
 	jsonStr, _ := db.Call("Proc_SysUser_delById_v1.0", userId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -54,7 +54,7 @@ func (this *SysUser) DelSysUserById (userId int64) int {
 }
 
 // 根据ID查询管理员详情
-func (this *SysUser) GetUserInfoById (adminId int64) *SysUser {
+func (su *SysUser) GetUserInfoById (adminId int64) *SysUser {
 	jsonStr, _ := db.Call("Proc_SysUser_infoById_v1.0", adminId)
 	info := []*SysUser{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -62,7 +62,7 @@ func (this *SysUser) GetUserInfoById (adminId int64) *SysUser {
 }
 
 // 添加、编辑管理员
-func (this *SysUser) ModifySysUser (nickname, phone, password, remark string, roleId, sex, adminId int64) int {
+func (su *SysUser) ModifySysUser (nickname, phone, password, remark string, roleId, sex, adminId int64) int {
 	if len(password) > 0  {
 		password = utils.Md5(password)
 	}
@@ -73,7 +73,7 @@ func (this *SysUser) ModifySysUser (nickname, phone, password, remark string, ro
 }
 
 //后台登录
-func (this *SysUser) Login (acconut, password string, c *gin.Context) int {
+func (su *SysUser) Login (acconut, password string, c *gin.Context) int {
 	jsonStr, _ := db.Call("Proc_SysUser_login_v1.0", acconut, password)
 	info := []*SysUser{}
 	json.Unmarshal([]byte(jsonStr), &info)

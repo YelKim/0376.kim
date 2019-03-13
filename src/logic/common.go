@@ -5,12 +5,11 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 	"utils/mysql"
 )
 
 var db = mysql.GetMysql()
-var once sync.Once
+
 var pageSize = conf.GetConfig().PageSize
 
 // 把文件从临时目录移动到新文件
@@ -34,75 +33,3 @@ func moveUpfile(fileName, folder string) string {
 	}
 	return newFileName
 }
-
-type IsysMenu interface {
-	GetSysMenuListByPage (page int32, keyword  string)
-	GetSysMenuChildListByParentId (parentId int64)
-}
-
-// 后台菜单
-var sysMenu *SysMenu
-func GetSysMenu() *SysMenu {
-	once.Do(func() {
-		sysMenu = &SysMenu{}
-	})
-	return sysMenu
-}
-
-// 管理员角色
-var sysRole *SysRole
-
-
-func GetSysRole() *SysRole {
-	once.Do(func() {
-		sysRole = &SysRole{}
-	})
-	return sysRole
-}
-
-// 管理员
-var sysUser *SysUser
-func GetSysUser() *SysUser {
-	once.Do(func() {
-		sysUser = &SysUser{}
-	})
-	return sysUser
-}
-
-// 基础配置
-var config *Config
-func GetConfig() *Config {
-	once.Do(func() {
-		config = &Config{}
-	})
-	return config
-}
-
-// 栏目
-var menu *Menu
-func GetMenu() *Menu {
-	once.Do(func() {
-		menu = &Menu{}
-	})
-	return menu
-}
-
-// 商品分类
-var goodsCategory *GoodsCategory
-func GetGoodsCategory() *GoodsCategory {
-	once.Do(func() {
-		goodsCategory = &GoodsCategory{}
-	})
-	return goodsCategory
-}
-
-// 商品
-var goods *Goods
-func GetGoods() *Goods {
-	once.Do(func() {
-		goods = &Goods{}
-	})
-	return goods
-}
-
-

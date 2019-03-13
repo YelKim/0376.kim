@@ -14,6 +14,14 @@ import (
 
 type AdminControl struct{}
 
+//上传状态映射表，国际化用户需考虑此处数据的国际化
+var ueditorMap = gin.H{
+	"ERROR_SIZE_EXCEED":      "文件大小超出网站限制",
+	"ERROR_TYPE_NOT_ALLOWED": "文件类型不允许",
+	"ERROR_FILE_MOVE":        "文件保存时出错",
+	"ERROR_FILE_NOT_FOUND":   "找不到上传文件",
+}
+
 // 错误码
 var errMessage = gin.H{
 	"0":    "操作成功",
@@ -62,7 +70,7 @@ func returnHtml(c *gin.Context, views string, data interface{}) {
 }
 
 //上传文件
-func (this *AdminControl) Upload(c *gin.Context) {
+func (ac *AdminControl) Upload(c *gin.Context) {
 	file, header, err := c.Request.FormFile("upfile")
 	if err != nil {
 		returnJson(c, 1000, nil)
@@ -105,17 +113,8 @@ func (this *AdminControl) Upload(c *gin.Context) {
 	return
 }
 
-//上传状态映射表，国际化用户需考虑此处数据的国际化
-var ueditorMap = gin.H{
-	"ERROR_SIZE_EXCEED":      "文件大小超出网站限制",
-	"ERROR_TYPE_NOT_ALLOWED": "文件类型不允许",
-	"ERROR_FILE_MOVE":        "文件保存时出错",
-	"ERROR_FILE_NOT_FOUND":   "找不到上传文件",
-}
-
-
 // 百度编辑器配置、文件上传
-func (this *AdminControl) Ueditor(c *gin.Context) {
+func (ac *AdminControl) Ueditor(c *gin.Context) {
 	action := c.DefaultQuery("action", "config")
 	switch action {
 	case "config":

@@ -25,7 +25,7 @@ type sysRoleList struct {
 }
 
 // 分页获取管理员角色列表
-func (this *SysRole) GetRoleListByPage (page int32, keyword string) interface{} {
+func (sr *SysRole) GetRoleListByPage (page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysRole_pagination_v1.0", page, pageSize, keyword)
 	info := &sysRoleList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -37,7 +37,7 @@ func (this *SysRole) GetRoleListByPage (page int32, keyword string) interface{} 
 }
 
 // 根据ID查询管理员角色详情
-func (this *SysRole) GetRoleInfoById (roleId int64) *SysRole {
+func (sr *SysRole) GetRoleInfoById (roleId int64) *SysRole {
 	jsonStr, _ := db.Call("Proc_SysRole_infoById_v1.0", roleId)
 	info := []*SysRole{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -45,7 +45,7 @@ func (this *SysRole) GetRoleInfoById (roleId int64) *SysRole {
 }
 
 // 添加、编辑管理员角色
-func (this *SysRole) ModifySysRole (roleId int64, title, remark, menuArr string) int {
+func (sr *SysRole) ModifySysRole (roleId int64, title, remark, menuArr string) int {
 	jsonStr, _ := db.Call("Proc_SysRole_modify_v1.0", title, remark, menuArr, roleId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -53,7 +53,7 @@ func (this *SysRole) ModifySysRole (roleId int64, title, remark, menuArr string)
 }
 
 // 根据管理员角色ID获取角色对应的菜单id列表
-func (this *SysRole) GetSysRoleMenuListByRoleId (roleId int64) []int32 {
+func (sr *SysRole) GetSysRoleMenuListByRoleId (roleId int64) []int32 {
 	jsonStr, _ := db.Call("Proc_SysRoleMenu_listByRoleId_v1.0", roleId)
 	info := []map[string]int32{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -67,7 +67,7 @@ func (this *SysRole) GetSysRoleMenuListByRoleId (roleId int64) []int32 {
 }
 
 // 获取所有角色，用于下列框显示
-func (this *SysRole) GetSysRoleList() []*SysRole {
+func (sr *SysRole) GetSysRoleList() []*SysRole {
 	jsonStr, _ := db.Call("Proc_SysRole_list_v1.0")
 	info := []*SysRole{}
 	json.Unmarshal([]byte(jsonStr), &info)

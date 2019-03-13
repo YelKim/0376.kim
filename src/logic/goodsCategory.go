@@ -43,7 +43,7 @@ type goodsCategoryTree struct {
 }
 
 // 分页获取栏目列表
-func (this *GoodsCategory) GetGoodsCategoryListByPage(page int32, keyword string) interface{} {
+func (gc *GoodsCategory) GetGoodsCategoryListByPage(page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_pagination_v1.0", page, pageSize, keyword)
 	info := &goodsCategoryList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -55,7 +55,7 @@ func (this *GoodsCategory) GetGoodsCategoryListByPage(page int32, keyword string
 }
 
 // 分页获取子栏目列表
-func (this *GoodsCategory) GetGoodsCategoryChildListByParentId(parentId int64) interface{} {
+func (gc *GoodsCategory) GetGoodsCategoryChildListByParentId(parentId int64) interface{} {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_child_v1.0", parentId)
 	info := []*GoodsCategory{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -63,7 +63,7 @@ func (this *GoodsCategory) GetGoodsCategoryChildListByParentId(parentId int64) i
 }
 
 // 删除栏目
-func (this *GoodsCategory) DelGoodsCategoryById(categotyId int64) int {
+func (gc *GoodsCategory) DelGoodsCategoryById(categotyId int64) int {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_delById_v1.0", categotyId)
 	info := []map[string]string{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -78,7 +78,7 @@ func (this *GoodsCategory) DelGoodsCategoryById(categotyId int64) int {
 }
 
 // 根据ID查询后台菜单详情
-func (this *GoodsCategory) GetGoodsCategoryInfoById(categoryId int64) *GoodsCategory {
+func (gc *GoodsCategory) GetGoodsCategoryInfoById(categoryId int64) *GoodsCategory {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_infoById_v1.0", categoryId)
 	info := []*GoodsCategory{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -86,7 +86,7 @@ func (this *GoodsCategory) GetGoodsCategoryInfoById(categoryId int64) *GoodsCate
 }
 
 // 添加、编辑后台菜单
-func (this *GoodsCategory) ModifyGoodsCategory(title, imgurl string, parentId, sort, categoryId int64) int {
+func (gc *GoodsCategory) ModifyGoodsCategory(title, imgurl string, parentId, sort, categoryId int64) int {
 	// 判断是否有图标上传
 	_imgurl := ""
 	if len(imgurl) > 0 {
@@ -100,7 +100,7 @@ func (this *GoodsCategory) ModifyGoodsCategory(title, imgurl string, parentId, s
 }
 
 // 根据等级获取菜单列表
-func (this *GoodsCategory) GetGoodsCategoryListByLevel(level int) []*goodsCategoryTree {
+func (gc *GoodsCategory) GetGoodsCategoryListByLevel(level int) []*goodsCategoryTree {
 	jsonStr, _ := db.Call("Proc_GoodsCategory_listBylevel_v1.0", level)
 	list := []*goodsCategoryTree{}
 	json.Unmarshal([]byte(jsonStr), &list)

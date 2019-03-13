@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-type iSysMenu interface {
+type ISysMenu interface {
 	GetSysMenuListByPage(int32, string) interface{}
 	GetSysMenuChildListByParentId(int64) interface{}
 	GetSysMenuInfoById(int64) *SysMenu
@@ -43,7 +43,7 @@ type sysMenuTree struct {
 }
 
 // 分页获取后台菜单列表
-func (this *SysMenu) GetSysMenuListByPage (page int32, keyword string) interface{} {
+func (sm *SysMenu) GetSysMenuListByPage (page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_SysMenu_pagination_v1.0", page, pageSize, keyword)
 	info := &sysMenuList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -55,7 +55,7 @@ func (this *SysMenu) GetSysMenuListByPage (page int32, keyword string) interface
 }
 
 // 分页获取后台子菜单列表
-func (this *SysMenu) GetSysMenuChildListByParentId (parentId int64) interface{} {
+func (sm *SysMenu) GetSysMenuChildListByParentId (parentId int64) interface{} {
 	jsonStr, _ := db.Call("Proc_SysMenu_child_v1.0", parentId)
 	info := []*SysMenu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -63,7 +63,7 @@ func (this *SysMenu) GetSysMenuChildListByParentId (parentId int64) interface{} 
 }
 
 // 删除后台菜单
-func (this *SysMenu) DelSysMenuById (menuId int64) int {
+func (sm *SysMenu) DelSysMenuById (menuId int64) int {
 	jsonStr, _ := db.Call("Proc_SysMenu_delById_v1.0", menuId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -71,7 +71,7 @@ func (this *SysMenu) DelSysMenuById (menuId int64) int {
 }
 
 // 根据ID查询后台菜单详情
-func (this *SysMenu) GetSysMenuInfoById (menuId int64) *SysMenu {
+func (sm *SysMenu) GetSysMenuInfoById (menuId int64) *SysMenu {
 	jsonStr, _ := db.Call("Proc_SysMenu_infoById_v1.0", menuId)
 	info := []*SysMenu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -79,7 +79,7 @@ func (this *SysMenu) GetSysMenuInfoById (menuId int64) *SysMenu {
 }
 
 // 添加、编辑后台菜单
-func (this *SysMenu) ModifySysMenu (menuId, parentId, sort int64, title, icon, control, action string) int {
+func (sm *SysMenu) ModifySysMenu (menuId, parentId, sort int64, title, icon, control, action string) int {
 	jsonStr, _ := db.Call("Proc_SysMenu_modify_v1.0", title, icon, control, action, parentId, sort, menuId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -87,7 +87,7 @@ func (this *SysMenu) ModifySysMenu (menuId, parentId, sort int64, title, icon, c
 }
 
 // 根据等级获取菜单列表
-func (this *SysMenu) GetSysMenuListByLevel(level int) []*sysMenuTree {
+func (sm *SysMenu) GetSysMenuListByLevel(level int) []*sysMenuTree {
 	jsonStr, _ := db.Call("Proc_SysMenu_listBylevel_v1.0", level)
 	list := []*sysMenuTree{}
 	json.Unmarshal([]byte(jsonStr), &list)

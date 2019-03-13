@@ -8,11 +8,13 @@ import (
 	"strings"
 )
 
+var config *logic.Config
+
 // 网站信息配置
 func (this *AdminControl) ConfigInfo(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		_type, _ := strconv.Atoi(c.DefaultPostForm("type", "1"))
-		info := logic.GetConfig().GetConfigInfoByType(_type)
+		info := logic.IConfig(config).GetConfigInfoByType(_type)
 		returnJson(c, 0, gin.H{
 			"content": info["content"],
 			"keys":    info["keys"],
@@ -24,7 +26,7 @@ func (this *AdminControl) ConfigInfo(c *gin.Context) {
 }
 
 // 编辑网站配置信息
-func (this *AdminControl) ConfigModify(c *gin.Context) {
+func (this *AdminControl) ConfigModify(c *gin.Context) w{
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		_type, _ := strconv.Atoi(c.DefaultPostForm("type", "0"))
 		var content interface{}
@@ -47,7 +49,7 @@ func (this *AdminControl) ConfigModify(c *gin.Context) {
 			returnJson(c, 1001, nil)
 		}
 		jsonStr, _ := json.Marshal(content)
-		iRelust := logic.GetConfig().ModifyConfig(_type, string(jsonStr))
+		iRelust := logic.IConfig(config).ModifyConfig(_type, string(jsonStr))
 		returnJson(c, iRelust, nil)
 		return
 	}

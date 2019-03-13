@@ -12,9 +12,9 @@ import (
 )
 
 //首页
-func (this *AdminControl) Index(c *gin.Context) {
+func (ac *AdminControl) Index(c *gin.Context) {
 	// 获取后台左侧菜单
-	menuTree := logic.GetSysMenu().GetSysMenuListByLevel(2)
+	menuTree := logic.ISysMenu(sysmenu).GetSysMenuListByLevel(2)
 	sessionId, _ := c.Cookie("session_id")
 	sysInfo := utils.GetSeesionMgr(c).Get(sessionId,"sysInfo")
 	returnHtml(c, "index.html", gin.H{
@@ -25,7 +25,7 @@ func (this *AdminControl) Index(c *gin.Context) {
 }
 
 //欢迎页
-func (this *AdminControl) Welcome(c *gin.Context) {
+func (ac *AdminControl) Welcome(c *gin.Context) {
 	//服务器名称
 	host, _ := os.Hostname()
 	path, _ := os.Getwd()
@@ -42,7 +42,7 @@ func (this *AdminControl) Welcome(c *gin.Context) {
 }
 
 //登录
-func (this *AdminControl) Login(c *gin.Context) {
+func (ac *AdminControl) Login(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		code := c.DefaultPostForm("captcha", "")
 		account := c.DefaultPostForm("account", "")
@@ -62,7 +62,7 @@ func (this *AdminControl) Login(c *gin.Context) {
 			returnJson(c, 1022, nil)
 			return
 		}
-		iResult := logic.GetSysUser().Login(account, utils.Md5(strings.Trim(password, "")), c)
+		iResult := logic.ISysUser(sysuser).Login(account, utils.Md5(strings.Trim(password, "")), c)
 		returnJson(c, iResult, nil)
 		return
 	}
@@ -71,7 +71,7 @@ func (this *AdminControl) Login(c *gin.Context) {
 }
 
 //验证码
-func (this *AdminControl) Captcha(c *gin.Context) {
+func (ac *AdminControl) Captcha(c *gin.Context) {
 	code := captcha.NewLen(4)
 	sessionId, _ := c.Cookie("session_id")
 	utils.GetSeesionMgr(c).Set(sessionId, "captcha", code)
@@ -80,7 +80,7 @@ func (this *AdminControl) Captcha(c *gin.Context) {
 }
 
 //验证码
-func (this *AdminControl) Logout(c *gin.Context) {
+func (ac *AdminControl) Logout(c *gin.Context) {
 	sessionId, _ := c.Cookie("session_id")
 	utils.GetSeesionMgr(c).Set(sessionId, "sysInfo", nil)
 	c.Redirect(200, "/")

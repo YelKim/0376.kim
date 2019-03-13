@@ -43,7 +43,7 @@ type menuTree struct {
 }
 
 // 分页获取栏目列表
-func (this *Menu) GetMenuListByPage(page int32, keyword string) interface{} {
+func (m *Menu) GetMenuListByPage(page int32, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_Menu_pagination_v1.0", page, pageSize, keyword)
 	info := &menuList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -55,7 +55,7 @@ func (this *Menu) GetMenuListByPage(page int32, keyword string) interface{} {
 }
 
 // 分页获取子栏目列表
-func (this *Menu) GetMenuChildListByParentId(parentId int64) interface{} {
+func (m *Menu) GetMenuChildListByParentId(parentId int64) interface{} {
 	jsonStr, _ := db.Call("Proc_Menu_child_v1.0", parentId)
 	info := []*Menu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -63,7 +63,7 @@ func (this *Menu) GetMenuChildListByParentId(parentId int64) interface{} {
 }
 
 // 删除栏目
-func (this *Menu) DelMenuById(menuId int64) int {
+func (m *Menu) DelMenuById(menuId int64) int {
 	jsonStr, _ := db.Call("Proc_Menu_delById_v1.0", menuId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -71,7 +71,7 @@ func (this *Menu) DelMenuById(menuId int64) int {
 }
 
 // 根据ID查询栏目详情
-func (this *Menu) GetMenuInfoById(menuId int64) *Menu {
+func (m *Menu) GetMenuInfoById(menuId int64) *Menu {
 	jsonStr, _ := db.Call("Proc_Menu_infoById_v1.0", menuId)
 	info := []*Menu{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -79,7 +79,7 @@ func (this *Menu) GetMenuInfoById(menuId int64) *Menu {
 }
 
 // 添加、编辑栏目
-func (this *Menu) ModifyMenu(name, title, keyword, description, url string, parentId, sort, menuId int64) int {
+func (m *Menu) ModifyMenu(name, title, keyword, description, url string, parentId, sort, menuId int64) int {
 	jsonStr, _ := db.Call("Proc_Menu_modify_v1.0", name, title, keyword, description, url, parentId, sort, menuId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -87,7 +87,7 @@ func (this *Menu) ModifyMenu(name, title, keyword, description, url string, pare
 }
 
 // 根据等级获取栏目列表
-func (this *Menu) GetMenuListByLevel(level int) []*menuTree {
+func (m *Menu) GetMenuListByLevel(level int) []*menuTree {
 	jsonStr, _ := db.Call("Proc_Menu_listBylevel_v1.0", level)
 	list := []*menuTree{}
 	json.Unmarshal([]byte(jsonStr), &list)

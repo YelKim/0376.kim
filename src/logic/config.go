@@ -35,7 +35,7 @@ type InfoConfig struct {
 
 
 // 添加、编辑基础配置
-func (this *Config) ModifyConfig (_type int, content string) int {
+func (c *Config) ModifyConfig (_type int, content string) int {
 	jsonStr, _ := db.Call("Proc_Config_modify_v1.0", _type, content)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -43,7 +43,7 @@ func (this *Config) ModifyConfig (_type int, content string) int {
 }
 
 // 根据ID查询管理员角色详情
-func (this *Config) GetConfigInfoByType (_type int) map[string]interface{} {
+func (c *Config) GetConfigInfoByType (_type int) map[string]interface{} {
 	jsonStr, _ := db.Call("Proc_Config_info_v1.0", _type)
 	info := []*Config{}
 	json.Unmarshal([]byte(jsonStr), &info)

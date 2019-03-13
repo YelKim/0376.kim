@@ -11,7 +11,7 @@ import (
 
 type IGoods interface {
 	GetGoodListByPage(int64, int64, int64, string) interface{}
-	DelGoodsById(int64 int64) int
+	DelGoodsById(int64, int64) int
 	GetGoodsInfoById(int64) *Goods
 	ModifyGoods(string, string, string, string, float64, float64, string, string, string, int64, int64, int64, int64, string, string, int64) int
 }
@@ -48,7 +48,7 @@ type goodsList struct {
 }
 
 // 分页获取商品列表
-func (this *Goods) GetGoodListByPage (deleted, categoryId, page int64, keyword string) interface{} {
+func (g *Goods) GetGoodListByPage (deleted, categoryId, page int64, keyword string) interface{} {
 	jsonStr, _ := db.Call("Proc_Goods_pagination_v1.0", deleted, page, pageSize, keyword, categoryId)
 	info := &goodsList{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -60,7 +60,7 @@ func (this *Goods) GetGoodListByPage (deleted, categoryId, page int64, keyword s
 }
 
 // 上架、下架商品
-func (this *Goods) DelGoodsById (goodsId, deleted int64) int {
+func (g *Goods) DelGoodsById (goodsId, deleted int64) int {
 	jsonStr, _ := db.Call("Proc_Goods_delById_v1.0", goodsId, deleted)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -68,7 +68,7 @@ func (this *Goods) DelGoodsById (goodsId, deleted int64) int {
 }
 
 // 根据ID查询商品详情
-func (this *Goods) GetGoodsInfoById (goodsId int64) *Goods {
+func (g *Goods) GetGoodsInfoById (goodsId int64) *Goods {
 	jsonStr, _ := db.Call("Proc_Goods_infoById_v1.0", goodsId)
 	info := []*Goods{}
 	json.Unmarshal([]byte(jsonStr), &info)
@@ -96,7 +96,7 @@ func (this *Goods) GetGoodsInfoById (goodsId int64) *Goods {
 }
 
 // 添加、编辑商品
-func (this *Goods) ModifyGoods (name, title, keyword, description string, cost_price, price float64, details, mainImg, imgurl string, categoryId, stock, adminId, isPlan int64, planAt, endAt string, goodsId int64) int {
+func (g *Goods) ModifyGoods (name, title, keyword, description string, cost_price, price float64, details, mainImg, imgurl string, categoryId, stock, adminId, isPlan int64, planAt, endAt string, goodsId int64) int {
 	//处理主图
 	_mainImg := ""
 	if len(mainImg) > 0 {
