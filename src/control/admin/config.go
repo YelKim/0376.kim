@@ -26,7 +26,7 @@ func (this *AdminControl) ConfigInfo(c *gin.Context) {
 }
 
 // 编辑网站配置信息
-func (this *AdminControl) ConfigModify(c *gin.Context) w{
+func (this *AdminControl) ConfigModify(c *gin.Context) {
 	if strings.ToUpper(c.Request.Method) == "POST" {
 		_type, _ := strconv.Atoi(c.DefaultPostForm("type", "0"))
 		var content interface{}
