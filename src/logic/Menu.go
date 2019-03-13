@@ -15,15 +15,15 @@ type IMenu interface {
 }
 
 type MenuInfo struct {
-	Id          int32
-	Name        string                                    //栏目名称
-	Title       string                                    //html title
-	Keyword     string                                    //seo关键字
-	Description string                                    //seo描述
-	Url         string                                    //跳转链接
-	Sort        int32                                     //排序
-	ParentId    int32 `json:"parent_id" bson:"parent_id"` //无限分类 父类ID
-	Level       int8                                      //层级
+	Id          int32  `json:"id" bson:"id"`
+	Name        string `json:"name" bson:"name"`               //栏目名称
+	Title       string `json:"title" bson:"title"`             //html title
+	Keyword     string `json:"keyword" bson:"keyword"`         //seo关键字
+	Description string `json:"description" bson:"description"` //seo描述
+	Url         string `json:"parent_id" bson:"parent_id"`     //跳转链接
+	Sort        int32  `json:"sort" bson:"sort"`               //排序
+	ParentId    int32  `json:"parent_id" bson:"parent_id"`     //无限分类 父类ID
+	Level       int8   `json:"level" bson:"level"`             //层级
 }
 
 type Menu struct {
@@ -33,13 +33,13 @@ type Menu struct {
 }
 
 type menuList struct {
-	List  []*Menu
-	Total int64
+	List  []*Menu `json:"list" bson:"list"`
+	Total int64   `json:"total" bson:"total"`
 }
 
 type menuTree struct {
 	MenuInfo
-	Children []*menuTree
+	Children []*menuTree `json:"children" bson:"children"`
 }
 
 // 分页获取栏目列表

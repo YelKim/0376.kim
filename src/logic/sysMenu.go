@@ -16,14 +16,14 @@ type ISysMenu interface {
 }
 
 type SysMenuInfo struct {
-	Id       int32
-	Title    string                                    //菜单名称
-	Icon     string                                    //一级菜单图标
-	Control  string                                    //controller
-	Action   string                                    // action
-	Sort     int32                                     //排序
-	ParentId int32 `json:"parent_id" bson:"parent_id"` // 无限分类 父类ID
-	Level    int8                                      // 层级
+	Id       int32  `json:"id" bson:"id"`
+	Title    string `json:"title" bson:"title"`         //菜单名称
+	Icon     string `json:"icon" bson:"icon"`           //一级菜单图标
+	Control  string `json:"control" bson:"control"`     //controller
+	Action   string `json:"action" bson:"action"`       // action
+	Sort     int32  `json:"sort" bson:"sort"`           //排序
+	ParentId int32  `json:"parent_id" bson:"parent_id"` // 无限分类 父类ID
+	Level    int8   `json:"level" bson:"level"`         // 层级
 }
 
 type SysMenu struct {
@@ -33,13 +33,13 @@ type SysMenu struct {
 }
 
 type sysMenuList struct {
-	List  []*SysMenu
-	Total int64
+	List  []*SysMenu `json:"list" bson:"list"`
+	Total int64      `json:"total" bson:"total"`
 }
 
 type sysMenuTree struct {
 	SysMenuInfo
-	Children []*sysMenuTree
+	Children []*sysMenuTree `json:"children" bson:"children"`
 }
 
 // 分页获取后台菜单列表

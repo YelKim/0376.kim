@@ -15,22 +15,22 @@ type ISysUser interface {
 }
 
 type SysUser struct {
-	Id       int32
-	Nickname string                                     // 昵称
-	Password string                                     // 密码
-	Phone    string                                     // 手机号
-	Sex      int                                        // 性别 0: 女 1: 男
-	RoleId   int `json:"role_id" bson:"role_id"`        // 角色ID
-	Remark   string                                     // 备注
+	Id       int32  `json:"id" bson:"id"`
+	Nickname string `json:"nickname" bson:"nickname"`   // 昵称
+	Password string `json:"password" bson:"password"`   // 密码
+	Phone    string `json:"phone" bson:"phone"`         // 手机号
+	Sex      int    `json:"sex" bson:"sex"`             // 性别 0: 女 1: 男
+	RoleId   int    `json:"role_id" bson:"role_id"`     // 角色ID
+	Remark   string `json:"remark" bson:"remark"`       // 备注
 	RoleName string `json:"role_name" bson:"role_name"` // 角色名称
-	Times    int32                                      // 登录次数
-	Deleted  int                                        // 状态 0:正常 1: 冻结
-	CreateAt int64 `json:"create_at" bson:"create_at"`
+	Times    int32  `json:"times" bson:"times"`         // 登录次数
+	Deleted  int    `json:"deleted" bson:"deleted"`     // 状态 0:正常 1: 冻结
+	CreateAt int64  `json:"create_at" bson:"create_at"`
 }
 
 type sysUserList struct {
-	List  []*SysUser
-	Total int64
+	List  []*SysUser `json:"list" bson:"list"`
+	Total int64      `json:"total" bson:"total"`
 }
 
 // 分页获取管理员列表

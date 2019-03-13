@@ -3,7 +3,6 @@ package router
 import (
 	"control"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"path/filepath"
 	"strings"
 	"utils"
@@ -25,7 +24,7 @@ func loginMiddleware(c *gin.Context) {
 		sessionId, _ := c.Cookie("session_id")
 		sysInfo := utils.GetSeesionMgr(c).Get(sessionId, "sysInfo")
 		if sysInfo == nil {
-			c.Redirect(http.StatusMovedPermanently, "/login.html")
+			c.Redirect(302, "/login.html")
 			c.Abort()
 			return
 		}

@@ -13,15 +13,15 @@ type ISysRole interface {
 }
 
 type SysRole struct {
-	Id      int32
-	Title   string //角色名称
-	Remark  string //备注
-	UpateAt int64 `json:"update_at" bson:"update_at"`
+	Id      int32  `json:"id" bson:"id"`
+	Title   string `json:"title" bson:"title"`   //角色名称
+	Remark  string `json:"remark" bson:"remark"` //备注
+	UpateAt int64  `json:"update_at" bson:"update_at"`
 }
 
 type sysRoleList struct {
-	List  []*SysRole
-	Total int64
+	List  []*SysRole `json:"list" bson:"list"`
+	Total int64      `json:"total" bson:"total"`
 }
 
 // 分页获取管理员角色列表

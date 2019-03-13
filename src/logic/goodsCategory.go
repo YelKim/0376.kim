@@ -18,12 +18,12 @@ type IGoodsCategory interface {
 }
 
 type GoodsCategoryInfo struct {
-	Id       int32
-	Title    string                                    // 分类名称
-	Imgurl   string                                    // 图标
-	Sort     int32                                     //排序
-	ParentId int32 `json:"parent_id" bson:"parent_id"` //无限分类 父类ID
-	Level    int8                                      //层级
+	Id       int32  `json:"id" bson:"id"`
+	Title    string `json:"title" bson:"title"`         // 分类名称
+	Imgurl   string `json:"imgurl" bson:"imgurl"`       // 图标
+	Sort     int32  `json:"sort" bson:"sort"`           //排序
+	ParentId int32  `json:"parent_id" bson:"parent_id"` //无限分类 父类ID
+	Level    int8   `json:"level" bson:"level"`         //层级
 }
 
 type GoodsCategory struct {
@@ -33,13 +33,13 @@ type GoodsCategory struct {
 }
 
 type goodsCategoryList struct {
-	List  []*GoodsCategory
-	Total int64
+	List  []*GoodsCategory `json:"list" bson:"list"`
+	Total int64            `json:"update_at" bson:"update_at"`
 }
 
 type goodsCategoryTree struct {
 	GoodsCategoryInfo
-	Children []*goodsCategoryTree
+	Children []*goodsCategoryTree `json:"children" bson:"children"`
 }
 
 // 分页获取栏目列表
