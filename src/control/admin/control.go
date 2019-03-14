@@ -118,14 +118,14 @@ func (ac *AdminControl) Ueditor(c *gin.Context) {
 	action := c.DefaultQuery("action", "config")
 	switch action {
 	case "config":
-		file, err :=ioutil.ReadFile("./lib/ueditor/1.4.3/config.json")
+		file, err := ioutil.ReadFile("./lib/ueditor/1.4.3/config.json")
 		if err != nil {
 			return
 		}
 		c.Header("Content-type", "application/json")
 		c.Writer.Write(file)
 		return
-	break
+		break
 	case "image":
 		file, header, err := c.Request.FormFile("upfile")
 		if err != nil {
@@ -165,12 +165,12 @@ func (ac *AdminControl) Ueditor(c *gin.Context) {
 		defer out.Close()
 		io.Copy(out, file)
 		c.JSON(200, gin.H{
-			"state": "SUCCESS",
-			"url": strings.Trim(fileName, "."),
-			"title": header.Filename,
+			"state":    "SUCCESS",
+			"url":      strings.Trim(fileName, "."),
+			"title":    header.Filename,
 			"original": header.Filename,
-			"type": extArr[1],
-			"size": header.Size,
+			"type":     extArr[1],
+			"size":     header.Size,
 		})
 		return
 	}

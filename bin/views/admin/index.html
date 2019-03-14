@@ -22,7 +22,28 @@
     </div>
 </header>
 <!-- 菜单 -->
-{{ template "index-menu.html" .}}
+<aside class="Hui-aside">
+    <div class="menu_dropdown bk_2">
+        {{range $k, $v := .menuTree}}
+            <dl>
+                <dt>
+                    <i class="Hui-iconfont">{{$v.Icon}}</i> {{$v.Title}}
+                    <i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+                </dt>
+                <dd>
+                    <ul>
+                        {{range $_k, $_v := $v.Children}}
+                            <li><a data-href="/{{$_v.Control}}-{{$_v.Action}}.html" data-title="{{$_v.Title}}" href="javascript:void(0)">
+                                    {{$_v.Title}}
+                                </a>
+                            </li>
+                        {{end}}
+                    </ul>
+                </dd>
+            </dl>
+        {{end}}
+    </div>
+</aside>
 <section class="Hui-article-box">
     <div id="Hui-tabNav" class="Hui-tabNav hidden-xs">
         <div class="Hui-tabNav-wp">

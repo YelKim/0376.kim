@@ -12,7 +12,7 @@ var adminRouter *gin.Engine
 
 // 中间件 验证是否登录
 func loginMiddleware(c *gin.Context) {
-	urlArr := []string{ "/favicon.ico", "/static", "/captcha.html", "/upload", "/login.html"}
+	urlArr := []string{ "/favicon.ico", "/static", "/captcha.html", "/lib", "/upload", "/login.html"}
 	bool := true
 	for _, v := range urlArr{
 		if strings.Index(c.Request.URL.Path, v) != -1 {
@@ -47,6 +47,7 @@ func GetAdminRouter() *gin.Engine {
 
 	// 静态路由
 	r.Static("/upload", "./upload") //上传目录
+	r.Static("/lib", "./lib") //静态文件
 	r.Static("/static", "./static") //静态文件
 
 	// 基本路由
@@ -57,8 +58,8 @@ func GetAdminRouter() *gin.Engine {
 	r.POST("/login.html", c.Login)    // ajax登录
 	r.GET("/captcha.html", c.Captcha) //验证码
 	r.POST("/upload.html", c.Upload)  // 图片上传
-	r.GET("/ueditor.html", c.Ueditor)  // 百度编辑器配置
 	r.GET("/logout.html", c.Logout)  // 登出
+	r.GET("/ueditor.html", c.Ueditor)  // 百度编辑器配置
 	r.POST("/ueditor.html", c.Ueditor)  // 百度编辑器上传
 
 	// 后台菜单

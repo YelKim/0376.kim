@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -121,10 +122,19 @@ func (g *Goods) ModifyGoods (name, title, keyword, description string, cost_pric
 	json.Unmarshal([]byte(jsonStr), &info)
 	if info[0]["type"] == 0 {
 		go func() {
+			altCount := strings.Count(details, `alt=""`)
+			strings.Replace(details, `alt=""`, "", altCount)
+			// 处理临时图片
 			tmpCount := strings.Count(details, "/upload/tmp/")
-			fmt.Println(tmpCount)
+			r, _ := regexp.Compile(`src="\/upload\/tmp\/[0-9]{8}\/[0-9a-z]{13,}.[a-z]{3,4}"`)
+			tmpArr := r.FindAllString(details, tmpCount)
+			for _, v := range tmpArr {
+				srcArr := strings.Split(v, `"`)
+				imgUrl := moveUpfile(srcArr[1], "goods")
+				strings.Replace(details, srcArr[1], imgUrl, 1)
+			}
+			db.Call("Proc_Goods_modify_v1.0", name, title, keyword, description, cost_price, price, categoryId, stock, details, _mainImg, strings.Join(_imgurlArr, ","), isPlan, planAt, endAt, info[0]["goods_id"])
 		}()
-
 	}
 	return info[0]["type"]
 }
