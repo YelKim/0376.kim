@@ -40,7 +40,7 @@ type Goods struct {
 	EndAtTxt     string   `json:"end_at_txt" bson:"end_at_txt"`       //计划结束时间始时间
 	Deleted      int      `json:"deleted" bson:"deleted"`             // 状态 0:正常 1: 冻结
 	CategoryName string   `json:"category_name" bson:"category_name"` //分类名称
-	UpdateAt     string   `json:"update_at" bson:"update_at"`
+	UpdateAt     int64   `json:"update_at" bson:"update_at"`
 }
 
 type goodsList struct {
@@ -120,6 +120,7 @@ func (g *Goods) ModifyGoods (name, title, keyword, description string, cost_pric
 	jsonStr, _ := db.Call("Proc_Goods_modify_v1.0", name, title, keyword, description, cost_price, price, categoryId, stock, details, _mainImg, strings.Join(_imgurlArr, ","), isPlan, planAt, endAt, goodsId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
+	fmt.Println(info)
 	if info[0]["type"] == 0 {
 		go func() {
 			altCount := strings.Count(details, `alt=""`)
@@ -130,9 +131,12 @@ func (g *Goods) ModifyGoods (name, title, keyword, description string, cost_pric
 			tmpArr := r.FindAllString(details, tmpCount)
 			for _, v := range tmpArr {
 				srcArr := strings.Split(v, `"`)
+				fmt.Print(srcArr)
 				imgUrl := moveUpfile(srcArr[1], "goods")
+				fmt.Println(imgUrl)
 				strings.Replace(details, srcArr[1], imgUrl, 1)
 			}
+			fmt.Println(details)
 			db.Call("Proc_Goods_modify_v1.0", name, title, keyword, description, cost_price, price, categoryId, stock, details, _mainImg, strings.Join(_imgurlArr, ","), isPlan, planAt, endAt, info[0]["goods_id"])
 		}()
 	}
