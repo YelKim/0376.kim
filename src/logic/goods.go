@@ -119,5 +119,12 @@ func (g *Goods) ModifyGoods (name, title, keyword, description string, cost_pric
 	jsonStr, _ := db.Call("Proc_Goods_modify_v1.0", name, title, keyword, description, cost_price, price, categoryId, stock, details, _mainImg, strings.Join(_imgurlArr, ","), isPlan, planAt, endAt, goodsId)
 	info := []map[string]int{}
 	json.Unmarshal([]byte(jsonStr), &info)
+	if info[0]["type"] == 0 {
+		go func() {
+			tmpCount := strings.Count(details, "/upload/tmp/")
+			fmt.Println(tmpCount)
+		}()
+
+	}
 	return info[0]["type"]
 }

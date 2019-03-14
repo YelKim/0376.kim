@@ -4,7 +4,7 @@ var uploader = WebUploader.create({
         extensions: 'gif,jpg,jpeg,bmp,png,mp3,wav,xls,xlsx,wbmp'
     },
     fileVal: 'upfile',
-    swf: '/lib/webuploader/0.1.5/Uploader.swf',
+    swf: './lib/webuploader/0.1.5/Uploader.swf',
     // 其他配置项
     compress: {
         quality: 90,
